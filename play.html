@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BytePlay — Play</title><link rel="stylesheet" href="styles.css"></head><body>
+<div class="player">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <a class="btn" href="./">← Back</a><span id="title" class="meta"></span>
+    <div><button class="btn" id="fullscreen">Fullscreen</button><button class="btn" id="restart">Restart</button></div>
+  </div>
+  <div id="msg" class="err"></div>
+  <div class="canvas"><div id="game"></div></div>
+</div>
+<script>
+const id=new URL(location.href).searchParams.get('id')||'';let meta=null;
+async function boot(){const r=await fetch('games.json');const data=await r.json();const items=data.games||[];meta=items.find(x=>x.id===id);
+if(!meta&&id==='byor'){document.getElementById('title').textContent='Bring Your Own ROM';document.getElementById('msg').textContent='Choose a supported ROM file (local only).';
+const input=document.createElement('input');input.type='file';input.accept='.gba,.gbc,.gb,.sfc,.smc,.nes,.zip,.a26';input.className='btn';input.style.margin='10px 0';
+input.onchange=()=>{const f=input.files?.[0];if(!f)return;window.EJS_player='#game';window.EJS_core=guess(f.name);window.EJS_gameUrl=URL.createObjectURL(f);window.EJS_pathtodata='data/';const s=document.createElement('script');s.src='data/loader.js';document.body.appendChild(s);};
+document.querySelector('.player').insertBefore(input,document.querySelector('.canvas'));return;}
+if(!meta){document.getElementById('msg').textContent='Game not found.';return;}
+document.getElementById('title').textContent=meta.title;
+window.EJS_player='#game';window.EJS_core=meta.core;window.EJS_gameUrl=meta.rom;window.EJS_pathtodata='data/';if(meta.bios){window.EJS_biosUrl=meta.bios;}
+const s=document.createElement('script');s.src='data/loader.js';document.body.appendChild(s);
+document.getElementById('fullscreen').onclick=()=>{const el=document.querySelector('.canvas');(el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen||(()=>{})).call(el);};
+document.getElementById('restart').onclick=()=>location.reload();}
+function guess(n){n=n.toLowerCase();if(n.endsWith('.gba'))return'gba';if(n.endsWith('.gbc'))return'gbc';if(n.endsWith('.gb'))return'gb';if(n.endsWith('.sfc')||n.endsWith('.smc'))return'snes';if(n.endsWith('.nes'))return'nes';if(n.endsWith('.a26'))return'atari2600';if(n.endsWith('.zip'))return'neogeo';return'gba';}
+boot();
+</script>
+</body></html>

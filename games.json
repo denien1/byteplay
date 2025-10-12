@@ -1,0 +1,104 @@
+{
+  "games": [
+    {
+      "id": "gba-unbound",
+      "title": "Pok\u00e9mon Unbound",
+      "system": "gba",
+      "core": "gba",
+      "year": "2015",
+      "genre": "RPG",
+      "region": "USA",
+      "cover": "covers/pokemon-unbound.jpg",
+      "rom": "roms/gba/pokemon-unbound.gba"
+    },
+    {
+      "id": "gba-radical-red",
+      "title": "Pok\u00e9mon Radical Red",
+      "system": "gba",
+      "core": "gba",
+      "year": "2020",
+      "genre": "RPG",
+      "region": "USA",
+      "cover": "covers/pokemon-radical-red.jpg",
+      "rom": "roms/gba/pokemon-radical-red.gba"
+    },
+    {
+      "id": "gba-gaia",
+      "title": "Pok\u00e9mon GAIA",
+      "system": "gba",
+      "core": "gba",
+      "year": "2018",
+      "genre": "RPG",
+      "region": "USA",
+      "cover": "covers/pokemon-gaia.jpg",
+      "rom": "roms/gba/pokemon-gaia.gba"
+    },
+    {
+      "id": "gba-rowe",
+      "title": "Pok\u00e9mon R.O.W.E",
+      "system": "gba",
+      "core": "gba",
+      "year": "2020",
+      "genre": "RPG",
+      "region": "USA",
+      "cover": "covers/pokemon-rowe.jpg",
+      "rom": "roms/gba/pokemon-rowe.gba"
+    },
+    {
+      "id": "gba-adventure-red",
+      "title": "Pok\u00e9mon Adventure - Red Chapter",
+      "system": "gba",
+      "core": "gba",
+      "year": "2014",
+      "genre": "RPG",
+      "region": "USA",
+      "cover": "covers/pokemon-adventure-red.jpg",
+      "rom": "roms/gba/pokemon-adventure-red.gba"
+    },
+    {
+      "id": "snes-smw",
+      "title": "Super Mario World",
+      "system": "snes",
+      "core": "snes",
+      "year": "1990",
+      "genre": "Platformer",
+      "region": "USA",
+      "cover": "covers/smw.jpg",
+      "rom": "roms/snes/super-mario-world.sfc"
+    },
+    {
+      "id": "neogeo-kof98",
+      "title": "The King of Fighters '98",
+      "system": "neogeo",
+      "core": "neogeo",
+      "year": "1998",
+      "genre": "Fighting",
+      "region": "JPN",
+      "cover": "covers/kof98.jpg",
+      "rom": "roms/neogeo/kof98.zip",
+      "bios": "roms/neogeo/neogeo.zip"
+    },
+    {
+      "id": "a26-pitfall",
+      "title": "Pitfall!",
+      "system": "atari2600",
+      "core": "atari2600",
+      "year": "1982",
+      "genre": "Action",
+      "region": "USA",
+      "cover": "covers/pitfall.jpg",
+      "rom": "roms/atari2600/pitfall.a26"
+    },
+    {
+      "id": "byor",
+      "title": "Bring Your Own ROM",
+      "system": "multi",
+      "core": "gba",
+      "year": "",
+      "genre": "",
+      "region": "",
+      "cover": "covers/byor.jpg",
+      "rom": ""
+    }
+  ]
+}

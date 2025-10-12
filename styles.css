@@ -1,0 +1,20 @@
+
+body{background:#0b0b0f;color:#e7e9ee;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0}
+a{text-decoration:none;color:inherit}.container{max-width:1100px;margin:0 auto;padding:16px}
+.header{display:flex;justify-content:space-between;align-items:center;padding:12px 0}
+.brand{display:flex;gap:10px;align-items:center}.brand img{width:36px;height:36px}
+.nav{display:flex;gap:10px;align-items:center}.nav a,.nav button{padding:8px 10px;border-radius:8px;border:0;background:#15151d;color:#9aa0aa;cursor:pointer}
+.nav a:hover,.nav button:hover{background:#1c1c26;color:#fff}.dropdown{position:relative}
+.menu{position:absolute;top:115%;left:0;background:#15151d;border:1px solid #262a3a;border-radius:10px;padding:6px;display:none;z-index:10;min-width:180px}
+.menu a{display:block;padding:8px 10px;border-radius:8px}.menu a:hover{background:#1c1c26}
+.hero{border:1px solid #262a3a;border-radius:14px;padding:16px;background:linear-gradient(180deg,rgba(52,199,89,.12),rgba(0,162,255,.08))}
+.search{display:flex;gap:10px;margin:16px 0;flex-wrap:wrap}
+.search input,.search select,.search button{padding:10px 12px;border-radius:10px;border:1px solid #262a3a;background:#0f1016;color:#e7e9ee}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.card{background:#15151d;border:1px solid #262a3a;border-radius:14px;overflow:hidden}
+.cover{width:100%;aspect-ratio:4/3;object-fit:cover}.content{padding:10px 12px}
+.title{font-weight:700}.meta{font-size:12px;color:#9aa0aa}.pager{display:flex;gap:8px;justify-content:center;margin:16px 0}
+.btn{padding:8px 12px;border-radius:10px;border:1px solid #273149;background:#121520;color:#e7e9ee;cursor:pointer}
+.player{max-width:1100px;margin:0 auto;padding:16px}.canvas{background:#000;border:1px solid #262a3a;border-radius:12px;overflow:hidden}
+#game{width:100%;aspect-ratio:4/3}.err{color:#ff6b6b}
+footer{text-align:center;color:#9aa0aa;margin:20px 0}
