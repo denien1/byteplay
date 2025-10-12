@@ -8,7 +8,7 @@
 <script>
 async function load(){const id=new URL(location.href).searchParams.get('id');const r=await fetch('games.json');const data=await r.json();const g=(data.games||[]).find(x=>x.id===id);const el=document.getElementById('content');
 if(!g){el.innerHTML='<div class="err">Game not found.</div>';return;}
-el.innerHTML=`<div style="display:grid;gap:20px;grid-template-columns:260px 1fr;margin-top:10px"><img class="cover" src="${g.cover}"><div><h2>${g.title}</h2><div class="meta">${(g.system||'').toUpperCase()} • ${g.year||''} ${g.genre?('• '+g.genre):''}</div><div style="margin:10px 0;color:#9aa0aa">Region: ${g.region||'—'}</div><div style="display:flex;gap:10px"><a class="btn" href="play.html?id=${g.id}">▶ Play</a><a class="btn" href="./">Back</a></div></div></div>`;}
+el.innerHTML=`<div style="display:grid;gap:20px;grid-template-columns:260px 1fr;margin-top:10px"><img class="cover" src="${g.cover}" alt="${g.title} cover"><div><h2>${g.title}</h2><div class="meta">${(g.system||'').toUpperCase()} • ${g.year||''} ${g.genre?('• '+g.genre):''}</div><div style="margin:10px 0;color:#9aa0aa">Region: ${g.region||'—'}</div><div style="display:flex;gap:10px"><a class="btn" href="play.html?id=${g.id}">▶ Play</a><a class="btn" href="./">Back</a></div></div></div>`;}
 load();
 </script>
 <script src="assets/particles.min.js"></script>

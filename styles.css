@@ -1,4 +1,5 @@
 
+html,body{height:100%}
 body{background:#0b0b0f;color:#e7e9ee;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0}
 a{text-decoration:none;color:inherit}.container{max-width:1100px;margin:0 auto;padding:16px}
 .header{display:flex;justify-content:space-between;align-items:center;padding:12px 0}
@@ -25,4 +26,9 @@ footer{text-align:center;color:#9aa0aa;margin:20px 0}
   z-index: -3;        /* mesh can sit at -2; UI stays above both */
   pointer-events: none;
 }
-
+/* Force the injected canvas to actually fill the viewport */
+#particles-js > .particles-js-canvas-el{
+  width:100% !important;
+  height:100% !important;
+  display:block;
+}
