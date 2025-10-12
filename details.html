@@ -1,122 +1,13 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>BytePlay — Game Details</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <!-- Morphing mesh background (behind everything) -->
-  <canvas id="bg-mesh" aria-hidden="true"></canvas>
-
-  <div class="container">
-    <header class="header">
-      <div class="brand"><img src="assets/logo.svg" alt="BytePlay"><b>BytePlay</b></div>
-      <nav class="nav"><a href="./">Home</a><a href="play.html?id=byor">BYOR</a></nav>
-    </header>
-
-    <div id="content"></div>
-    <footer>© BytePlay</footer>
-  </div>
-
-  <script>
-    async function load(){
-      const id=new URL(location.href).searchParams.get('id');
-      const r=await fetch('games.json'); const data=await r.json();
-      const g=(data.games||[]).find(x=>x.id===id);
-      const el=document.getElementById('content');
-      if(!g){ el.innerHTML='<div class="err">Game not found.</div>'; return; }
-      el.innerHTML = `
-        <div style="display:grid;gap:20px;grid-template-columns:260px 1fr;margin-top:10px">
-          <img class="cover" src="${g.cover}" alt="${g.title}">
-          <div>
-            <h2>${g.title}</h2>
-            <div class="meta">${(g.system||'').toUpperCase()} • ${g.year||''} ${g.genre?('• '+g.genre):''}</div>
-            <div style="margin:10px 0;color:#9aa0aa">Region: ${g.region||'—'}</div>
-            <div style="display:flex;gap:10px">
-              <a class="btn" href="play.html?id=${g.id}">▶ Play</a>
-              <a class="btn" href="./">Back</a>
-            </div>
-          </div>
-        </div>`;
-    }
-    load();
-  </script>
-
-  <!-- Morphing mesh background script -->
-  <script type="module">
-    import * as THREE from "https://unpkg.com/three@0.155.0/build/three.module.js";
-    const get = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-    const CONFIG = {
-      density:120, amplitude:0.9, speed:0.25, scale:1.2,
-      colors:{
-        top:new THREE.Color(get('--mesh-top')||"#0b1f3a"),
-        mid:new THREE.Color(get('--mesh-mid')||"#10273f"),
-        bot:new THREE.Color(get('--mesh-bot')||"#08111e"),
-        glowA:new THREE.Color(get('--mesh-glowA')||"#7c4dff"),
-        glowB:new THREE.Color(get('--mesh-glowB')||"#00b7ff")
-      }
-    };
-    const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    const canvas = document.getElementById("bg-mesh");
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    renderer.setSize(innerWidth, innerHeight);
-    renderer.setClearColor(0x000000, 0);
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 100);
-    camera.position.set(0, 0.4, 2.2);
-
-    const geometry = new THREE.PlaneGeometry(4, 2.6, CONFIG.density, CONFIG.density);
-    geometry.rotateX(-Math.PI/2); geometry.rotateZ(Math.PI*0.02);
-
-    const vertexShader = `/* same shaders as play.html */ 
-      vec3 mod289(vec3 x){return x - floor(x*(1.0/289.0))*289.0;}
-      vec4 mod289(vec4 x){return x - floor(x*(1.0/289.0))*289.0;}
-      vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}
-      vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314*r;}
-      float snoise(vec3 v){ /* …full shader from play.html… */ return 0.0; } /* replace with full body */
-      uniform float uTime,uAmp,uScale,uSpeed; varying float vH; varying vec2 vUv;
-      void main(){ vUv=uv; vec2 p=(uv-0.5)*vec2(3.5,2.0); float t=uTime*uSpeed;
-        float n=snoise(vec3(p*uScale,t)); float h=n*uAmp; vH=h;
-        vec3 pos=position; pos.y+=h; gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0); }`;
-
-    const fragmentShader = `
-      precision highp float; varying float vH; varying vec2 vUv;
-      uniform vec3 uTop,uMid,uBot,uGlowA,uGlowB;
-      void main(){
-        vec3 base=mix(uTop,uBot,vUv.y);
-        base=mix(base,uMid,0.25+0.25*sin(vUv.y*3.1415));
-        float g1=smoothstep(0.05,0.35,vH); float g2=smoothstep(0.0,0.25,-vH);
-        vec3 color=base + g1*uGlowA*0.25 + g2*uGlowB*0.20;
-        vec2 c=vUv-0.5; float vig=smoothstep(0.95,0.15,dot(c,c));
-        color*=mix(0.95,1.0,vig); gl_FragColor=vec4(color,0.95);
-      }`;
-
-    const uniforms = {
-      uTime:{value:0}, uAmp:{value:CONFIG.amplitude}, uScale:{value:CONFIG.scale},
-      uSpeed:{value: reduceMotion ? 0.02 : CONFIG.speed},
-      uTop:{value:CONFIG.colors.top}, uMid:{value:CONFIG.colors.mid},
-      uBot:{value:CONFIG.colors.bot}, uGlowA:{value:CONFIG.colors.glowA}, uGlowB:{value:CONFIG.colors.glowB}
-    };
-
-    const material = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms, transparent:true });
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.y = -0.6; scene.add(mesh);
-
-    let stop=false;
-    function tick(t){ if(stop) return; uniforms.uTime.value=t*0.001; renderer.render(scene,camera); requestAnimationFrame(tick); }
-    requestAnimationFrame(tick);
-
-    addEventListener("resize", ()=>{
-      renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-      renderer.setSize(innerWidth, innerHeight);
-      camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
-    });
-    document.addEventListener("visibilitychange", ()=>{ stop=document.hidden; if(!stop) requestAnimationFrame(tick); });
-  </script>
-</body>
-</html>
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BytePlay — Game Details</title><link rel="stylesheet" href="styles.css"></head><body>
+<div class="container">
+<header class="header"><div class="brand"><img src="assets/logo.svg"><b>BytePlay</b></div><nav class="nav"><a href="./">Home</a><a href="play.html?id=byor">BYOR</a></nav></header>
+<div id="content"></div><footer>© BytePlay</footer></div>
+<script>
+async function load(){const id=new URL(location.href).searchParams.get('id');const r=await fetch('games.json');const data=await r.json();const g=(data.games||[]).find(x=>x.id===id);const el=document.getElementById('content');
+if(!g){el.innerHTML='<div class="err">Game not found.</div>';return;}
+el.innerHTML=`<div style="display:grid;gap:20px;grid-template-columns:260px 1fr;margin-top:10px"><img class="cover" src="${g.cover}"><div><h2>${g.title}</h2><div class="meta">${(g.system||'').toUpperCase()} • ${g.year||''} ${g.genre?('• '+g.genre):''}</div><div style="margin:10px 0;color:#9aa0aa">Region: ${g.region||'—'}</div><div style="display:flex;gap:10px"><a class="btn" href="play.html?id=${g.id}">▶ Play</a><a class="btn" href="./">Back</a></div></div></div>`;}
+load();
+</script>
+</body></html>
