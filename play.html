@@ -1,142 +1,121 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Times New Roman'; color: #0000e9; -webkit-text-stroke: #0000e9}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Times New Roman'; color: #0000e9; -webkit-text-stroke: #0000e9; min-height: 15.0px}
-    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000; min-height: 14.0px}
-    span.s1 {text-decoration: underline ; font-kerning: none}
-    span.s2 {font-kerning: none}
-  </style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>BytePlay — Play</title>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-<p class="p1"><span class="s1">&lt;!doctype html&gt;</span></p>
-<p class="p1"><span class="s1">&lt;html lang="en"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;head&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;meta charset="utf-8"/&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width,initial-scale=1"/&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;title&gt;BytePlay — Play&lt;/title&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;link rel="stylesheet" href="styles.css"/&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
-<p class="p1"><span class="s1">&lt;body&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div class="player"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;a class="btn" href="./"&gt;← Back&lt;/a&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;span id="title" class="meta"&gt;&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;button class="btn" id="fullscreen"&gt;Fullscreen&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;button class="btn" id="restart"&gt;Restart&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div id="msg" class="err"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="canvas"&gt;&lt;div id="game"&gt;&lt;/div&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;script&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const params = new URL(location.href).searchParams;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const id = params.get('id') || '';</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>async function boot() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>let meta = null;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>try {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const res = await fetch('games.json', { cache: 'no-store' });</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const data = await res.json();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>meta = (data.games || []).find(g =&gt; g.id === id);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>} catch (e) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>document.getElementById('msg').textContent = 'Failed to load games.json';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>console.error(e);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>return;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>// BYOR — Bring Your Own ROM</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (!meta &amp;&amp; id === 'byor') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>document.getElementById('title').textContent = 'Bring Your Own ROM';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>document.getElementById('msg').textContent = 'Choose a ROM file (.gba, .gbc, .gb, .sfc/.smc, .zip, .a26).';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const input = document.createElement('input');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>input.type = 'file';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>input.accept = '.gba,.gbc,.gb,.sfc,.smc,.nes,.zip,.a26';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>input.className = 'btn';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>input.style.margin = '10px 0';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>input.onchange = () =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>const f = input.files?.[0];</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>if (!f) return;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>// REQUIRED: set EJS_* BEFORE loading loader.js</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>window.EJS_player <span class="Apple-converted-space">    </span>= '#game';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>window.EJS_core <span class="Apple-converted-space">      </span>= guessCore(f.name);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>window.EJS_gameUrl<span class="Apple-converted-space">    </span>= URL.createObjectURL(f);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>window.EJS_pathtodata = 'data/';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>console.log('EJS_core:', window.EJS_core);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>const s = document.createElement('script');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>s.src = 'data/loader.js';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>document.body.appendChild(s);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>};</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>document.querySelector('.player').insertBefore(input, document.querySelector('.canvas'));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>wireToolbar();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>return;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (!meta) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>document.getElementById('msg').textContent = 'Game not found.';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>wireToolbar();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>return;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>document.getElementById('title').textContent = meta.title || '';</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>// REQUIRED: set EJS_* BEFORE loading loader.js</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>window.EJS_player <span class="Apple-converted-space">    </span>= '#game';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>window.EJS_core <span class="Apple-converted-space">      </span>= meta.core; <span class="Apple-converted-space">          </span>// "gba" | "snes" | "fbneo" | "atari2600"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>window.EJS_gameUrl<span class="Apple-converted-space">    </span>= meta.rom;<span class="Apple-converted-space">            </span>// e.g., roms/neogeo/kof98.zip</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>window.EJS_pathtodata = 'data/'; <span class="Apple-converted-space">            </span>// contains loader.js and cores</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (meta.bios) window.EJS_biosUrl = meta.bios; // e.g., roms/neogeo/neogeo.zip</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>// Helpful debug logs (open DevTools Console to see)</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>console.log('EJS_core:', window.EJS_core);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>console.log('EJS_gameUrl:', window.EJS_gameUrl);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>console.log('EJS_biosUrl:', window.EJS_biosUrl);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>console.log('EJS_pathtodata:', window.EJS_pathtodata);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>// Load the EmulatorJS loader AFTER the variables are set</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const s = document.createElement('script');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>s.src = 'data/loader.js';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>s.onerror = () =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>document.getElementById('msg').textContent = 'Could not load data/loader.js — ensure the local data/ folder exists.';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>};</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>document.body.appendChild(s);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>wireToolbar();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>function wireToolbar() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>document.getElementById('fullscreen').onclick = () =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const el = document.querySelector('.canvas');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>(el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen || (() =&gt; {})).call(el);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>};</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>document.getElementById('restart').onclick = () =&gt; location.reload();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>function guessCore(n) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>n = n.toLowerCase();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (n.endsWith('.gba')) return 'gba';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (n.endsWith('.gbc')) return 'gbc';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (n.endsWith('.gb'))<span class="Apple-converted-space">  </span>return 'gb';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (n.endsWith('.sfc') || n.endsWith('.smc')) return 'snes';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (n.endsWith('.nes')) return 'nes';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (n.endsWith('.a26')) return 'atari2600';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (n.endsWith('.zip')) return 'fbneo'; // most arcade/Neo-Geo sets</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>return 'gba';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>boot();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
-<p class="p3"><span class="s2"></span><br></p>
-<p class="p3"><span class="s2"></span><br></p>
+  <div class="player">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <a class="btn" href="./">← Back</a>
+      <span id="title" class="meta"></span>
+      <div>
+        <button class="btn" id="fullscreen">Fullscreen</button>
+        <button class="btn" id="restart">Restart</button>
+      </div>
+    </div>
+    <div id="msg" class="err"></div>
+    <div class="canvas"><div id="game"></div></div>
+  </div>
+
+  <script>
+    const params = new URL(location.href).searchParams;
+    const id = params.get('id') || '';
+
+    async function boot() {
+      let meta = null;
+      try {
+        const res = await fetch('games.json', { cache: 'no-store' });
+        const data = await res.json();
+        meta = (data.games || []).find(g => g.id === id);
+      } catch (e) {
+        document.getElementById('msg').textContent = 'Failed to load games.json';
+        console.error(e);
+        return;
+      }
+
+      // BYOR — Bring Your Own ROM
+      if (!meta && id === 'byor') {
+        document.getElementById('title').textContent = 'Bring Your Own ROM';
+        document.getElementById('msg').textContent = 'Choose a ROM file (.gba, .gbc, .gb, .sfc/.smc, .zip, .a26).';
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.gba,.gbc,.gb,.sfc,.smc,.nes,.zip,.a26';
+        input.className = 'btn';
+        input.style.margin = '10px 0';
+        input.onchange = () => {
+          const f = input.files?.[0];
+          if (!f) return;
+          // REQUIRED: set EJS_* BEFORE loading loader.js
+          window.EJS_player     = '#game';
+          window.EJS_core       = guessCore(f.name);
+          window.EJS_gameUrl    = URL.createObjectURL(f);
+          window.EJS_pathtodata = 'data/';
+          console.log('EJS_core:', window.EJS_core);
+          const s = document.createElement('script');
+          s.src = 'data/loader.js';
+          document.body.appendChild(s);
+        };
+        document.querySelector('.player').insertBefore(input, document.querySelector('.canvas'));
+        wireToolbar();
+        return;
+      }
+
+      if (!meta) {
+        document.getElementById('msg').textContent = 'Game not found.';
+        wireToolbar();
+        return;
+      }
+
+      document.getElementById('title').textContent = meta.title || '';
+
+      // REQUIRED: set EJS_* BEFORE loading loader.js
+      window.EJS_player     = '#game';
+      window.EJS_core       = meta.core;           // "gba" | "snes" | "fbneo" | "atari2600"
+      window.EJS_gameUrl    = meta.rom;            // e.g., roms/neogeo/kof98.zip
+      window.EJS_pathtodata = 'data/';             // contains loader.js and cores
+      if (meta.bios) window.EJS_biosUrl = meta.bios; // e.g., roms/neogeo/neogeo.zip
+
+      // Helpful debug logs (open DevTools Console to see)
+      console.log('EJS_core:', window.EJS_core);
+      console.log('EJS_gameUrl:', window.EJS_gameUrl);
+      console.log('EJS_biosUrl:', window.EJS_biosUrl);
+      console.log('EJS_pathtodata:', window.EJS_pathtodata);
+
+      // Load the EmulatorJS loader AFTER the variables are set
+      const s = document.createElement('script');
+      s.src = 'data/loader.js';
+      s.onerror = () => {
+        document.getElementById('msg').textContent = 'Could not load data/loader.js — ensure the local data/ folder exists.';
+      };
+      document.body.appendChild(s);
+
+      wireToolbar();
+    }
+
+    function wireToolbar() {
+      document.getElementById('fullscreen').onclick = () => {
+        const el = document.querySelector('.canvas');
+        (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen || (() => {})).call(el);
+      };
+      document.getElementById('restart').onclick = () => location.reload();
+    }
+
+    function guessCore(n) {
+      n = n.toLowerCase();
+      if (n.endsWith('.gba')) return 'gba';
+      if (n.endsWith('.gbc')) return 'gbc';
+      if (n.endsWith('.gb'))  return 'gb';
+      if (n.endsWith('.sfc') || n.endsWith('.smc')) return 'snes';
+      if (n.endsWith('.nes')) return 'nes';
+      if (n.endsWith('.a26')) return 'atari2600';
+      if (n.endsWith('.zip')) return 'fbneo'; // most arcade/Neo-Geo sets
+      return 'gba';
+    }
+
+    boot();
+  </script>
 </body>
 </html>
