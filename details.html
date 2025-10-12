@@ -1,6 +1,7 @@
 <!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BytePlay — Game Details</title><link rel="stylesheet" href="styles.css"></head><body>
+  <div id="particles-js"></div>
 <div class="container">
 <header class="header"><div class="brand"><img src="assets/logo.svg"><b>BytePlay</b></div><nav class="nav"><a href="./">Home</a><a href="play.html?id=byor">BYOR</a></nav></header>
 <div id="content"></div><footer>© BytePlay</footer></div>
@@ -9,5 +10,11 @@ async function load(){const id=new URL(location.href).searchParams.get('id');con
 if(!g){el.innerHTML='<div class="err">Game not found.</div>';return;}
 el.innerHTML=`<div style="display:grid;gap:20px;grid-template-columns:260px 1fr;margin-top:10px"><img class="cover" src="${g.cover}"><div><h2>${g.title}</h2><div class="meta">${(g.system||'').toUpperCase()} • ${g.year||''} ${g.genre?('• '+g.genre):''}</div><div style="margin:10px 0;color:#9aa0aa">Region: ${g.region||'—'}</div><div style="display:flex;gap:10px"><a class="btn" href="play.html?id=${g.id}">▶ Play</a><a class="btn" href="./">Back</a></div></div></div>`;}
 load();
+</script>
+<script src="assets/particles.min.js"></script>
+<script>
+  particlesJS.load('particles-js', 'assets/particles.json', () => {
+    console.log('particles loaded');
+  });
 </script>
 </body></html>

@@ -18,3 +18,11 @@ a{text-decoration:none;color:inherit}.container{max-width:1100px;margin:0 auto;p
 .player{max-width:1100px;margin:0 auto;padding:16px}.canvas{background:#000;border:1px solid #262a3a;border-radius:12px;overflow:hidden}
 #game{width:100%;aspect-ratio:4/3}.err{color:#ff6b6b}
 footer{text-align:center;color:#9aa0aa;margin:20px 0}
+/* Particles canvas layer */
+#particles-js{
+  position: fixed;
+  inset: 0;
+  z-index: -3;        /* mesh can sit at -2; UI stays above both */
+  pointer-events: none;
+}
+

@@ -3,6 +3,7 @@
 <title>BytePlay — Instant classics, in your browser</title>
 <meta name="description" content="Play SNES, Neo Geo, GBA, Atari 2600 and more in your browser.">
 <link rel="stylesheet" href="styles.css"></head><body>
+  <div id="particles-js"></div>
 <div class="container">
 <header class="header">
   <div class="brand"><img src="assets/logo.svg" alt="BytePlay"><div><b>BytePlay</b><div style="color:#9aa0aa;font-size:12px">Instant classics, in your browser.</div></div></div>
@@ -55,5 +56,11 @@ function wire(){document.getElementById('q').oninput=apply;document.getElementBy
 sysMenu.querySelectorAll('a').forEach(a=>a.onclick=(e)=>{e.preventDefault();sysFilter=a.dataset.sys;sysBtn.textContent=`Systems: ${sysFilter||'All'} ▾`;sysMenu.style.display='none';apply();});
 document.getElementById('prev').onclick=()=>{if(page>1){page--;render();}};document.getElementById('next').onclick=()=>{if((page*PAGE)<filtered.length){page++;render();}};}
 load();
+</script>
+<script src="assets/particles.min.js"></script>
+<script>
+  particlesJS.load('particles-js', 'assets/particles.json', () => {
+    console.log('particles loaded');
+  });
 </script>
 </body></html>
