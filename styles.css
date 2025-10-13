@@ -1,34 +1,91 @@
-
-html,body{height:100%}
-body{background:#0b0b0f;color:#e7e9ee;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0}
-a{text-decoration:none;color:inherit}.container{max-width:1100px;margin:0 auto;padding:16px}
-.header{display:flex;justify-content:space-between;align-items:center;padding:12px 0}
-.brand{display:flex;gap:10px;align-items:center}.brand img{width:36px;height:36px}
-.nav{display:flex;gap:10px;align-items:center}.nav a,.nav button{padding:8px 10px;border-radius:8px;border:0;background:#15151d;color:#9aa0aa;cursor:pointer}
-.nav a:hover,.nav button:hover{background:#1c1c26;color:#fff}.dropdown{position:relative}
-.menu{position:absolute;top:115%;left:0;background:#15151d;border:1px solid #262a3a;border-radius:10px;padding:6px;display:none;z-index:10;min-width:180px}
-.menu a{display:block;padding:8px 10px;border-radius:8px}.menu a:hover{background:#1c1c26}
-.hero{border:1px solid #262a3a;border-radius:14px;padding:16px;background:linear-gradient(180deg,rgba(52,199,89,.12),rgba(0,162,255,.08))}
-.search{display:flex;gap:10px;margin:16px 0;flex-wrap:wrap}
-.search input,.search select,.search button{padding:10px 12px;border-radius:10px;border:1px solid #262a3a;background:#0f1016;color:#e7e9ee}
-.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
-.card{background:#15151d;border:1px solid #262a3a;border-radius:14px;overflow:hidden}
-.cover{width:100%;aspect-ratio:4/3;object-fit:cover}.content{padding:10px 12px}
-.title{font-weight:700}.meta{font-size:12px;color:#9aa0aa}.pager{display:flex;gap:8px;justify-content:center;margin:16px 0}
-.btn{padding:8px 12px;border-radius:10px;border:1px solid #273149;background:#121520;color:#e7e9ee;cursor:pointer}
-.player{max-width:1100px;margin:0 auto;padding:16px}.canvas{background:#000;border:1px solid #262a3a;border-radius:12px;overflow:hidden}
-#game{width:100%;aspect-ratio:4/3}.err{color:#ff6b6b}
-footer{text-align:center;color:#9aa0aa;margin:20px 0}
-/* Particles canvas layer */
-#particles-js{
-  position: fixed;
-  inset: 0;
-  z-index: -3;        /* mesh can sit at -2; UI stays above both */
-  pointer-events: none;
+/* ---------- CSS Variables ---------- */
+:root{
+  --bg:#0d1117; --bg-2:#0b0f15; --card:#121826; --ink:#e6edf3; --ink-d:#9aa0aa;
+  --acc:#6ee7ff; --btn:#1f6feb; --btn-ink:#fff;
+  --mesh-top:#0b1f3a; --mesh-mid:#10273f; --mesh-bot:#08111e; --mesh-glowA:#7c4dff; --mesh-glowB:#00b7ff;
 }
-/* Force the injected canvas to actually fill the viewport */
-#particles-js > .particles-js-canvas-el{
-  width:100% !important;
-  height:100% !important;
-  display:block;
+
+/* ---------- Reset ---------- */
+*{box-sizing:border-box} html,body{height:100%}
+html{background:var(--bg)}
+body{margin:0;color:var(--ink);font:14px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+img{max-width:100%;display:block}
+
+/* ---------- Particles behind everything ---------- */
+#particles-js{
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+}
+.container, .player-page{position:relative; z-index:1}
+
+/* ---------- Layout ---------- */
+.container{max-width:1100px;margin:0 auto;padding:18px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand img{width:36px;height:36px}
+.brand-text small{display:block;color:var(--ink-d);font-size:12px;margin-top:-2px}
+
+.nav{display:flex;align-items:center;gap:8px}
+.btn{border:1px solid #2b3343;background:#1b2333;color:var(--ink);padding:8px 12px;border-radius:10px;cursor:pointer;text-decoration:none}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn.primary{background:var(--btn);border-color:var(--btn);color:var(--btn-ink)}
+.btn.wfull{display:block;width:100%;text-align:center}
+
+/* ---------- Dropdown ---------- */
+.dropdown{position:relative}
+.dropdown .menu{display:none;position:absolute;right:0;top:110%;background:var(--card);border:1px solid #263248;border-radius:10px;min-width:160px;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:8px}
+.dropdown .menu a{display:block;padding:8px 10px;color:var(--ink);text-decoration:none;border-radius:8px}
+.dropdown .menu a:hover{background:#171e2a}
+
+/* ---------- Hero ---------- */
+.hero{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(0,0,0,.0));border:1px solid #1f2838;border-radius:16px;padding:20px 18px;margin:8px 0 14px}
+.hero h1{margin:0 0 4px}
+.hero p{margin:0;color:var(--ink-d)}
+.hero-actions{margin-top:10px;display:flex;gap:8px}
+
+/* ---------- Search & Grid ---------- */
+.search{display:flex;gap:8px;align-items:center;margin:10px 0}
+.search input,.search select{background:#0f1521;border:1px solid #263248;border-radius:10px;color:var(--ink);padding:8px 10px}
+.meta{color:var(--ink-d)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin:12px 0}
+.card{background:var(--card);border:1px solid #1c2536;border-radius:14px;overflow:hidden;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;transition:transform .1s ease, box-shadow .1s ease}
+.card:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(0,0,0,.35)}
+.card .cover{width:100%;aspect-ratio:3/4;object-fit:cover;background:#000}
+.card .content{padding:10px}
+.card .title{font-weight:700}
+.pager{display:flex;gap:10px;justify-content:center;align-items:center;margin:8px 0 24px}
+
+/* ---------- Player Page ---------- */
+.play-layout{display:grid;grid-template-columns:260px 1fr;gap:16px}
+.sidebar{position:sticky;top:12px;height:fit-content}
+.side-card{background:var(--card);border:1px solid #1c2536;border-radius:14px;padding:12px}
+.side-cover{width:100%;border-radius:10px;aspect-ratio:3/4;object-fit:cover;background:#000}
+.side-title{margin:8px 0 2px}
+.side-meta{color:var(--ink-d);font-size:12px;margin:2px 0}
+
+.toolbar{display:flex;align-items:center;gap:10px;margin:4px 0 10px}
+.toolbar .spacer{flex:1}
+
+.emulator-wrap{background:#000;border:1px solid #1c2536;border-radius:14px;overflow:hidden;position:relative}
+.emulator-wrap > #game{position:absolute;inset:0}
+
+/* aspect ratios similar to gbapokemon.com visual */
+.emulator-wrap.ar-3x2{padding-top:66.66%} /* GBA */
+.emulator-wrap.ar-4x3{padding-top:75%}     /* SNES/Atari */
+
+/* details section below player */
+.details{background:var(--card);border:1px solid #1c2536;border-radius:14px;padding:14px;margin-top:12px}
+.dim{color:var(--ink-d)}
+.err{background:#2c1620;border:1px solid #512437;color:#ffd6df;padding:10px;border-radius:12px}
+
+/* footer */
+footer{margin:20px 0;color:var(--ink-d)}
+.link{color:var(--acc);text-decoration:none}
+.link:hover{text-decoration:underline}
+
+/* small screens */
+@media (max-width:900px){
+  .play-layout{grid-template-columns:1fr}
+  .sidebar{order:2}
+  .play-main{order:1}
 }

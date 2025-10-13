@@ -5,22 +5,51 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>BytePlay — Play</title>
   <link rel="stylesheet" href="styles.css"/>
+  <link rel="icon" href="assets/favicon.svg">
 </head>
 <body>
-  <!-- particles layer -->
+  <!-- background particles -->
   <div id="particles-js"></div>
 
-  <div class="player">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <a class="btn" href="./">← Back</a>
-      <span id="title" class="meta"></span>
-      <div>
-        <button class="btn" id="fullscreen">Fullscreen</button>
-        <button class="btn" id="restart">Restart</button>
-      </div>
+  <div class="player-page container">
+    <header class="header">
+      <a class="brand" href="./" title="Return Home">
+        <img src="assets/logo.svg" alt="BytePlay" />
+        <div class="brand-text">
+          <b>BytePlay</b>
+          <small>Instant classics, in your browser.</small>
+        </div>
+      </a>
+      <nav class="nav">
+        <a class="btn ghost" href="./">Home</a>
+        <a class="btn ghost" href="play.html?id=byor">BYOR</a>
+      </nav>
+    </header>
+
+    <div class="play-layout">
+      <!-- left sidebar -->
+      <aside class="sidebar" id="sidebar"></aside>
+
+      <!-- main player -->
+      <main class="play-main">
+        <div class="toolbar">
+          <span id="title" class="meta"></span>
+          <div class="spacer"></div>
+          <button class="btn" id="fullscreen">Fullscreen</button>
+          <button class="btn" id="restart">Restart</button>
+        </div>
+
+        <!-- responsive player box (aspect ratio depends on system) -->
+        <div class="emulator-wrap" id="emuWrap">
+          <div id="game"></div>
+        </div>
+
+        <!-- details below player like gbapokemon -->
+        <section class="details" id="details"></section>
+      </main>
     </div>
-    <div id="msg" class="err"></div>
-    <div class="canvas"><div id="game"></div></div>
+
+    <footer>© <a class="link" href="./">BytePlay</a></footer>
   </div>
 
   <script>
@@ -32,86 +61,75 @@
       try {
         const res = await fetch('games.json', { cache: 'no-store' });
         const data = await res.json();
-        meta = (data.games || []).find(g => g.id === id);
+        // no Neo Geo in this site anymore
+        const cleaned = (data.games || []).filter(g => ['gba','snes','atari2600'].includes(g.system));
+        meta = cleaned.find(g => g.id === id);
       } catch (e) {
-        document.getElementById('msg').textContent = 'Failed to load games.json';
-        console.error(e);
-        return;
+        fail('Failed to load games.json'); console.error(e); return;
       }
 
-      // BYOR — Bring Your Own ROM
+      // BYOR
       if (!meta && id === 'byor') {
+        renderSidebar({
+          title: 'Bring Your Own ROM',
+          cover: 'assets/byor-cover.svg',
+          system: 'custom',
+          year: '—',
+          genre: '—',
+          region: '—'
+        });
         document.getElementById('title').textContent = 'Bring Your Own ROM';
-        document.getElementById('msg').textContent = 'Choose a ROM file (.gba, .gbc, .gb, .sfc/.smc, .zip, .a26).';
+        document.getElementById('details').innerHTML = `<h2>Load a ROM</h2><p>Select a ROM file (.gba, .gbc, .gb, .sfc/.smc, .nes, .a26, .zip). It runs fully in your browser.</p>`;
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = '.gba,.gbc,.gb,.sfc,.smc,.nes,.zip,.a26';
         input.className = 'btn';
-        input.style.margin = '10px 0';
+        input.style.margin = '12px 0';
+        document.querySelector('.toolbar').prepend(input);
         input.onchange = () => {
-          const f = input.files?.[0];
-          if (!f) return;
-
-          // REQUIRED: set EJS_* BEFORE loading loader.js
+          const f = input.files?.[0]; if (!f) return;
+          setupAspectByCore(guessCore(f.name));
           window.EJS_player      = '#game';
           window.EJS_core        = guessCore(f.name);
           window.EJS_gameUrl     = URL.createObjectURL(f);
           window.EJS_pathtodata  = 'data/';
-          window.EJS_threads     = false; // GitHub Pages: no COOP/COEP → no threads
-
-          console.log('EJS_core:', window.EJS_core);
-          const s = document.createElement('script');
-          s.src = 'data/loader.js';
-          document.body.appendChild(s);
+          window.EJS_threads     = false; // GH Pages
+          loadLoader();
         };
-        document.querySelector('.player').insertBefore(input, document.querySelector('.canvas'));
         wireToolbar();
         return;
       }
 
-      if (!meta) {
-        document.getElementById('msg').textContent = 'Game not found.';
-        wireToolbar();
-        return;
-      }
+      if (!meta) { fail('Game not found.'); wireToolbar(); return; }
 
+      // UI
       document.getElementById('title').textContent = meta.title || '';
+      renderSidebar(meta);
+      renderDetails(meta);
+      setupAspectByCore(meta.core);
 
-      // REQUIRED: set EJS_* BEFORE loading loader.js
+      // EmulatorJS variables BEFORE loader.js
       window.EJS_player      = '#game';
-      window.EJS_core        = meta.core;           // "gba" | "snes" | "fbneo" | "atari2600"
-      window.EJS_gameUrl     = meta.rom;            // e.g., roms/neogeo/kof98.zip
-      window.EJS_pathtodata  = 'data/';             // contains loader.js, emulator.min.js, cores/*
-      if (meta.bios) window.EJS_biosUrl = meta.bios; // e.g., roms/neogeo/neogeo.zip
-      window.EJS_threads     = false;               // IMPORTANT on GitHub Pages
+      window.EJS_core        = meta.core;           // "gba" | "snes" | "atari2600"
+      window.EJS_gameUrl     = meta.rom;            // e.g., roms/gba/pokemon-unbound.gba
+      window.EJS_pathtodata  = 'data/';
+      window.EJS_threads     = false;               // GitHub Pages
+      // (no BIOS now; Neo Geo removed)
 
-      // Helpful debug logs
-      console.log('EJS_core:', window.EJS_core);
-      console.log('EJS_gameUrl:', window.EJS_gameUrl);
-      console.log('EJS_biosUrl:', window.EJS_biosUrl);
-      console.log('EJS_pathtodata:', window.EJS_pathtodata);
-      console.log('EJS_threads:', window.EJS_threads);
-
-      // Load the EmulatorJS loader AFTER the variables are set
-      const s = document.createElement('script');
-      s.src = 'data/loader.js';
-      s.onerror = () => {
-        document.getElementById('msg').textContent = 'Could not load data/loader.js — ensure the local data/ folder exists.';
-      };
-      document.body.appendChild(s);
-
+      loadLoader();
       wireToolbar();
     }
 
-    function wireToolbar() {
-      document.getElementById('fullscreen').onclick = () => {
-        const el = document.querySelector('.canvas');
-        (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen || (() => {})).call(el);
-      };
-      document.getElementById('restart').onclick = () => location.reload();
+    function loadLoader(){
+      const s = document.createElement('script');
+      s.src = 'data/loader.js';
+      s.onerror = ()=> fail('Could not load data/loader.js — ensure /data is present.');
+      document.body.appendChild(s);
     }
 
-    function guessCore(n) {
+    function fail(msg){ document.getElementById('details').innerHTML = `<div class="err">${msg}</div>`; }
+
+    function guessCore(n){
       n = n.toLowerCase();
       if (n.endsWith('.gba')) return 'gba';
       if (n.endsWith('.gbc')) return 'gbc';
@@ -119,19 +137,52 @@
       if (n.endsWith('.sfc') || n.endsWith('.smc')) return 'snes';
       if (n.endsWith('.nes')) return 'nes';
       if (n.endsWith('.a26')) return 'atari2600';
-      if (n.endsWith('.zip')) return 'fbneo'; // most arcade/Neo-Geo sets
+      if (n.endsWith('.zip')) return 'gba'; // default to gba for byor zips to avoid removed cores
       return 'gba';
+    }
+
+    function setupAspectByCore(core){
+      const wrap = document.getElementById('emuWrap');
+      wrap.classList.remove('ar-3x2','ar-4x3');
+      // GBA ~3:2 ; SNES/Atari ~4:3 (approx to match gbapokemon.com visual)
+      if (core === 'gba') wrap.classList.add('ar-3x2');
+      else wrap.classList.add('ar-4x3');
+    }
+
+    function renderSidebar(g){
+      document.getElementById('sidebar').innerHTML = `
+        <div class="side-card">
+          <img class="side-cover" src="${g.cover}" alt="${g.title||'Game Cover'}">
+          <h3 class="side-title">${g.title||'Untitled'}</h3>
+          <div class="side-meta">${(g.system||'').toUpperCase()} • ${g.year||''}</div>
+          <div class="side-meta">${g.genre||''} ${g.region?('• '+g.region):''}</div>
+          <a class="btn wfull" href="./">Home</a>
+        </div>`;
+    }
+
+    function renderDetails(g){
+      document.getElementById('details').innerHTML = `
+        <h2>${g.title}</h2>
+        <p class="dim"> ${(g.system||'').toUpperCase()} • ${g.year||''} ${g.genre?('• '+g.genre):''} ${g.region?('• '+g.region):''}</p>
+        ${g.description ? `<p>${g.description}</p>` : `<p>No description available.</p>`}
+      `;
+    }
+
+    function wireToolbar(){
+      document.getElementById('fullscreen').onclick = () => {
+        const el = document.querySelector('#game').parentElement;
+        (el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen||(()=>{})).call(el);
+      };
+      document.getElementById('restart').onclick = () => location.reload();
     }
 
     boot();
   </script>
 
-  <!-- particles background (after your scripts is fine) -->
+  <!-- particles -->
   <script src="assets/particles.min.js"></script>
   <script>
-    particlesJS.load('particles-js', 'assets/particles.json', () => {
-      console.log('particles loaded');
-    });
+    particlesJS.load('particles-js', 'assets/particles.json', ()=>console.log('particles loaded'));
   </script>
 </body>
 </html>

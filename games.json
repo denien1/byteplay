@@ -2,102 +2,92 @@
   "games": [
     {
       "id": "gba-unbound",
-      "title": "Pok\u00e9mon Unbound",
+      "title": "Pokémon Unbound",
       "system": "gba",
-      "core": "gba",
-      "year": "2015",
+      "year": 2018,
       "genre": "RPG",
-      "region": "USA",
+      "region": "Hack",
       "cover": "covers/pokemon-unbound.jpg",
-      "rom": "roms/gba/pokemon-unbound.gba"
+      "rom": "roms/gba/pokemon-unbound.gba",
+      "description": "A feature-rich GBA ROM hack with a custom region, QoL, and endgame content."
     },
     {
-      "id": "gba-radical-red",
-      "title": "Pok\u00e9mon Radical Red",
+      "id": "gba-radicalred",
+      "title": "Pokémon Radical Red",
       "system": "gba",
-      "core": "gba",
-      "year": "2020",
+      "year": 2020,
       "genre": "RPG",
-      "region": "USA",
-      "cover": "covers/pokemon-radical-red.jpg",
-      "rom": "roms/gba/pokemon-radical-red.gba"
+      "region": "Hack",
+      "cover": "covers/pokemon-radicalred.jpg",
+      "rom": "roms/gba/pokemon-radicalred.gba",
+      "description": "Difficulty-focused FireRed-based hack with modern mechanics."
     },
     {
       "id": "gba-gaia",
-      "title": "Pok\u00e9mon GAIA",
+      "title": "Pokémon Gaia",
       "system": "gba",
-      "core": "gba",
-      "year": "2018",
+      "year": 2018,
       "genre": "RPG",
-      "region": "USA",
+      "region": "Hack",
       "cover": "covers/pokemon-gaia.jpg",
-      "rom": "roms/gba/pokemon-gaia.gba"
+      "rom": "roms/gba/pokemon-gaia.gba",
+      "description": "Explore the Orbtus region with revamped mechanics and dungeons."
     },
     {
       "id": "gba-rowe",
-      "title": "Pok\u00e9mon R.O.W.E",
+      "title": "Pokémon R.O.W.E.",
       "system": "gba",
-      "core": "gba",
-      "year": "2020",
+      "year": 2020,
       "genre": "RPG",
-      "region": "USA",
+      "region": "Hack",
       "cover": "covers/pokemon-rowe.jpg",
-      "rom": "roms/gba/pokemon-rowe.gba"
+      "rom": "roms/gba/pokemon-rowe.gba",
+      "description": "Open world hack with scalable levels and extensive customizations."
     },
     {
-      "id": "gba-adventure-red",
-      "title": "Pok\u00e9mon Adventure - Red Chapter",
+      "id": "gba-redchapter",
+      "title": "Pokémon Adventure — Red Chapter",
       "system": "gba",
-      "core": "gba",
-      "year": "2014",
+      "year": 2014,
       "genre": "RPG",
-      "region": "USA",
-      "cover": "covers/pokemon-adventure-red.jpg",
-      "rom": "roms/gba/pokemon-adventure-red.gba"
+      "region": "Hack",
+      "cover": "covers/pokemon-redchapter.jpg",
+      "rom": "roms/gba/pokemon-redchapter.gba",
+      "description": "Story-driven hack inspired by the Pokémon Adventures manga."
     },
+
     {
       "id": "snes-smw",
       "title": "Super Mario World",
       "system": "snes",
-      "core": "snes",
-      "year": "1990",
+      "year": 1990,
       "genre": "Platformer",
       "region": "USA",
       "cover": "covers/smw.jpg",
-      "rom": "roms/snes/super-mario-world.sfc"
+      "rom": "roms/snes/smw.sfc",
+      "description": "Mario and Yoshi team up across Dinosaur Land in this SNES classic."
     },
-    {
-      "id": "neogeo-kof98",
-      "title": "The King of Fighters '98",
-      "system": "neogeo",
-      "core": "fbneo",
-      "year": "1998",
-      "genre": "Fighting",
-      "region": "JPN",
-      "cover": "covers/kof98.jpg",
-      "rom": "roms/neogeo/kof98.zip",
-      "bios": "roms/neogeo/neogeo.zip"
-    },
+
     {
       "id": "a26-pitfall",
       "title": "Pitfall!",
       "system": "atari2600",
-      "core": "atari2600",
-      "year": "1982",
-      "genre": "Action",
+      "year": 1982,
+      "genre": "Platformer",
       "region": "USA",
       "cover": "covers/pitfall.jpg",
-      "rom": "roms/atari2600/pitfall.a26"
+      "rom": "roms/atari2600/pitfall.a26",
+      "description": "Dodge pits and swing on vines in Activision’s legendary Atari adventure."
     },
+
     {
       "id": "byor",
       "title": "Bring Your Own ROM",
-      "system": "multi",
-      "core": "gba",
+      "system": "custom",
       "year": "",
       "genre": "",
       "region": "",
-      "cover": "covers/byor.jpg",
+      "cover": "assets/byor-cover.svg",
       "rom": ""
     }
   ]

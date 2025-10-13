@@ -1,66 +1,151 @@
-<!doctype html><html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BytePlay — Instant classics, in your browser</title>
-<meta name="description" content="Play SNES, Neo Geo, GBA, Atari 2600 and more in your browser.">
-<link rel="stylesheet" href="styles.css"></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>BytePlay — Instant classics, in your browser</title>
+  <meta name="description" content="Play GBA, SNES and Atari 2600 games instantly in your browser.">
+  <link rel="stylesheet" href="styles.css"/>
+  <link rel="icon" href="assets/favicon.svg">
+</head>
+<body>
+  <!-- background particles -->
   <div id="particles-js"></div>
-<div class="container">
-<header class="header">
-  <div class="brand"><img src="assets/logo.svg" alt="BytePlay"><div><b>BytePlay</b><div style="color:#9aa0aa;font-size:12px">Instant classics, in your browser.</div></div></div>
-  <nav class="nav">
-    <a class="active" href="./">Home</a>
-    <div class="dropdown">
-      <button id="sysBtn">Systems ▾</button>
-      <div class="menu" id="sysMenu">
-        <a href="#" data-sys="">All Systems</a>
-        <a href="#" data-sys="gba">GBA</a>
-        <a href="#" data-sys="snes">SNES</a>
-        <a href="#" data-sys="neogeo">Neo Geo</a>
-        <a href="#" data-sys="atari2600">Atari 2600</a>
+
+  <div class="container">
+    <header class="header">
+      <a class="brand" href="./">
+        <img src="assets/logo.svg" alt="BytePlay" />
+        <div class="brand-text">
+          <b>BytePlay</b>
+          <small>Instant classics, in your browser.</small>
+        </div>
+      </a>
+      <nav class="nav">
+        <a class="btn ghost active" href="./" aria-current="page">Home</a>
+        <div class="dropdown">
+          <button id="sysBtn" class="btn ghost">Systems ▾</button>
+          <div class="menu" id="sysMenu">
+            <a href="#" data-sys="">All Systems</a>
+            <a href="#" data-sys="gba">GBA</a>
+            <a href="#" data-sys="snes">SNES</a>
+            <a href="#" data-sys="atari2600">Atari 2600</a>
+          </div>
+        </div>
+        <a class="btn ghost" href="play.html?id=byor" title="Bring Your Own ROM">BYOR</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h1>Pick a classic. Press start.</h1>
+      <p>Click a cover to start playing immediately. Save states and settings live in your browser.</p>
+      <div class="hero-actions">
+        <a href="./" class="btn primary">Home</a>
+        <a href="play.html?id=byor" class="btn">Load my own ROM</a>
       </div>
+    </section>
+
+    <div class="search">
+      <input id="q" placeholder="Search title or genre…" aria-label="Search games">
+      <select id="year" aria-label="Filter by year">
+        <option value="">All years</option>
+        <option>1982</option>
+        <option>1990</option>
+        <option>2014</option>
+        <option>2018</option>
+        <option>2020</option>
+      </select>
+      <button id="reset" class="btn">Reset</button>
     </div>
-    <a href="play.html?id=byor">BYOR</a>
-  </nav>
-</header>
 
-<section class="hero"><h2>Pick a classic. Press start.</h2>
-<p>GBA, SNES, Neo Geo, Atari 2600 — click, play, and save in your browser.</p></section>
+    <div id="count" class="meta"></div>
+    <div id="grid" class="grid"></div>
 
-<div class="search">
-  <input id="q" placeholder="Search title or genre…">
-  <select id="year"><option value="">All years</option><option>1982</option><option>1990</option><option>1998</option><option>2014</option><option>2018</option><option>2020</option></select>
-  <button id="reset">Reset</button>
-</div>
+    <div class="pager">
+      <button class="btn" id="prev">Prev</button>
+      <span id="pageLabel" class="meta"></span>
+      <button class="btn" id="next">Next</button>
+    </div>
 
-<div id="count" class="meta"></div>
-<div id="grid" class="grid"></div>
-<div class="pager"><button class="btn" id="prev">Prev</button><span id="pageLabel" class="meta"></span><button class="btn" id="next">Next</button></div>
-<footer>© BytePlay</footer>
-</div>
+    <footer>© <a class="link" href="./">BytePlay</a></footer>
+  </div>
 
-<script>
-const PAGE=12;let all=[],filtered=[],page=1,sysFilter="";
-const sysBtn=document.getElementById('sysBtn');const sysMenu=document.getElementById('sysMenu');
-sysBtn.onclick=()=>{sysMenu.style.display=sysMenu.style.display==='block'?'none':'block';};
-document.addEventListener('click',(e)=>{if(!sysMenu.contains(e.target)&&e.target!==sysBtn)sysMenu.style.display='none';});
+  <script>
+  const PAGE = 12;
+  let all=[], filtered=[], page=1, sysFilter="";
+  const sysBtn = document.getElementById('sysBtn');
+  const sysMenu = document.getElementById('sysMenu');
 
-async function load(){const r=await fetch('games.json');const data=await r.json();all=(data.games||[]).filter(g=>g.id!=='byor');filtered=[...all];render();wire();}
-function apply(){const q=document.getElementById('q').value.toLowerCase().trim();const yr=document.getElementById('year').value;
-filtered=all.filter(g=>{const t=(g.title+' '+(g.genre||'')+' '+(g.system||'')).toLowerCase();if(q&&!t.includes(q))return false;if(sysFilter&&g.system!==sysFilter)return false;if(yr&&String(g.year)!==yr)return false;return true;});page=1;render();}
-function render(){const grid=document.getElementById('grid');const count=document.getElementById('count');const total=filtered.length;const start=(page-1)*PAGE;const slice=filtered.slice(start,start+PAGE);
-count.textContent=`${total} game${total!==1?'s':''} found`;
-grid.innerHTML=slice.map(g=>`<a class='card' href='details.html?id=${g.id}'><img class='cover' src='${g.cover}' alt='${g.title}'><div class='content'><div class='title'>${g.title}</div><div class='meta'>${(g.system||'').toUpperCase()} • ${g.year||''} ${g.genre?('• '+g.genre):''}</div></div></a>`).join('');
-document.getElementById('pageLabel').textContent=total===0?'0/0':`${Math.ceil(start+1)}-${Math.min(start+slice.length,total)} of ${total}`;
-document.getElementById('prev').disabled=page<=1;document.getElementById('next').disabled=start+PAGE>=total;}
-function wire(){document.getElementById('q').oninput=apply;document.getElementById('year').onchange=apply;document.getElementById('reset').onclick=()=>{document.getElementById('q').value='';document.getElementById('year').value='';sysFilter='';sysBtn.textContent='Systems ▾';apply();};
-sysMenu.querySelectorAll('a').forEach(a=>a.onclick=(e)=>{e.preventDefault();sysFilter=a.dataset.sys;sysBtn.textContent=`Systems: ${sysFilter||'All'} ▾`;sysMenu.style.display='none';apply();});
-document.getElementById('prev').onclick=()=>{if(page>1){page--;render();}};document.getElementById('next').onclick=()=>{if((page*PAGE)<filtered.length){page++;render();}};}
-load();
-</script>
-<script src="assets/particles.min.js"></script>
-<script>
-  particlesJS.load('particles-js', 'assets/particles.json', () => {
-    console.log('particles loaded');
-  });
-</script>
-</body></html>
+  sysBtn.onclick = ()=>{ sysMenu.style.display = sysMenu.style.display==='block' ? 'none':'block'; };
+  document.addEventListener('click',(e)=>{ if(!sysMenu.contains(e.target) && e.target!==sysBtn) sysMenu.style.display='none'; });
+
+  async function load(){
+    const res = await fetch('games.json', {cache:'no-store'});
+    const data = await res.json();
+    // REMOVE Neo Geo forever: filter out anything not in the 3 systems we support
+    all = (data.games||[]).filter(g => ['gba','snes','atari2600'].includes(g.system));
+    filtered = [...all];
+    render(); wire();
+  }
+
+  function apply(){
+    const q = document.getElementById('q').value.toLowerCase().trim();
+    const yr = document.getElementById('year').value;
+    filtered = all.filter(g=>{
+      const t = (g.title+' '+(g.genre||'')+' '+(g.system||'')).toLowerCase();
+      if(q && !t.includes(q)) return false;
+      if(sysFilter && g.system!==sysFilter) return false;
+      if(yr && String(g.year)!==yr) return false;
+      return true;
+    });
+    page = 1; render();
+  }
+
+  function render(){
+    const grid=document.getElementById('grid');
+    const count=document.getElementById('count');
+    const total=filtered.length;
+    const start=(page-1)*PAGE;
+    const slice=filtered.slice(start,start+PAGE);
+
+    count.textContent = `${total} game${total!==1?'s':''} found`;
+    // Clicking a card goes DIRECTLY to play.html
+    grid.innerHTML = slice.map(g=>`
+      <a class="card" href="play.html?id=${g.id}" title="Play ${g.title}">
+        <img class="cover" src="${g.cover}" alt="${g.title}">
+        <div class="content">
+          <div class="title">${g.title}</div>
+          <div class="meta">${(g.system||'').toUpperCase()} • ${g.year||''} ${g.genre?('• '+g.genre):''}</div>
+        </div>
+      </a>
+    `).join('');
+
+    document.getElementById('pageLabel').textContent = total===0 ? '0/0' : `${Math.ceil(start+1)}-${Math.min(start+slice.length,total)} of ${total}`;
+    document.getElementById('prev').disabled = page<=1;
+    document.getElementById('next').disabled = start+PAGE>=total;
+  }
+
+  function wire(){
+    document.getElementById('q').oninput = apply;
+    document.getElementById('year').onchange = apply;
+    document.getElementById('reset').onclick = ()=>{
+      document.getElementById('q').value = '';
+      document.getElementById('year').value = '';
+      sysFilter=''; sysBtn.textContent='Systems ▾'; apply();
+    };
+    sysMenu.querySelectorAll('a').forEach(a => a.onclick = (e)=>{
+      e.preventDefault(); sysFilter=a.dataset.sys; sysBtn.textContent=`Systems: ${sysFilter||'All'} ▾`; sysMenu.style.display='none'; apply();
+    });
+    document.getElementById('prev').onclick = ()=>{ if(page>1){ page--; render(); } };
+    document.getElementById('next').onclick = ()=>{ if((page*PAGE)<filtered.length){ page++; render(); } };
+  }
+  load();
+  </script>
+
+  <!-- particles -->
+  <script src="assets/particles.min.js"></script>
+  <script>
+    particlesJS.load('particles-js', 'assets/particles.json', ()=>console.log('particles loaded'));
+  </script>
+</body>
+</html>
