@@ -7,7 +7,9 @@
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-<div id="particles-js"></div>
+  <!-- particles layer -->
+  <div id="particles-js"></div>
+
   <div class="player">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
       <a class="btn" href="./">← Back</a>
@@ -49,11 +51,14 @@
         input.onchange = () => {
           const f = input.files?.[0];
           if (!f) return;
+
           // REQUIRED: set EJS_* BEFORE loading loader.js
-          window.EJS_player     = '#game';
-          window.EJS_core       = guessCore(f.name);
-          window.EJS_gameUrl    = URL.createObjectURL(f);
-          window.EJS_pathtodata = 'data/';
+          window.EJS_player      = '#game';
+          window.EJS_core        = guessCore(f.name);
+          window.EJS_gameUrl     = URL.createObjectURL(f);
+          window.EJS_pathtodata  = 'data/';
+          window.EJS_threads     = false; // GitHub Pages: no COOP/COEP → no threads
+
           console.log('EJS_core:', window.EJS_core);
           const s = document.createElement('script');
           s.src = 'data/loader.js';
@@ -73,17 +78,19 @@
       document.getElementById('title').textContent = meta.title || '';
 
       // REQUIRED: set EJS_* BEFORE loading loader.js
-      window.EJS_player     = '#game';
-      window.EJS_core       = meta.core;           // "gba" | "snes" | "fbneo" | "atari2600"
-      window.EJS_gameUrl    = meta.rom;            // e.g., roms/neogeo/kof98.zip
-      window.EJS_pathtodata = 'data/';             // contains loader.js and cores
+      window.EJS_player      = '#game';
+      window.EJS_core        = meta.core;           // "gba" | "snes" | "fbneo" | "atari2600"
+      window.EJS_gameUrl     = meta.rom;            // e.g., roms/neogeo/kof98.zip
+      window.EJS_pathtodata  = 'data/';             // contains loader.js, emulator.min.js, cores/*
       if (meta.bios) window.EJS_biosUrl = meta.bios; // e.g., roms/neogeo/neogeo.zip
+      window.EJS_threads     = false;               // IMPORTANT on GitHub Pages
 
-      // Helpful debug logs (open DevTools Console to see)
+      // Helpful debug logs
       console.log('EJS_core:', window.EJS_core);
       console.log('EJS_gameUrl:', window.EJS_gameUrl);
       console.log('EJS_biosUrl:', window.EJS_biosUrl);
       console.log('EJS_pathtodata:', window.EJS_pathtodata);
+      console.log('EJS_threads:', window.EJS_threads);
 
       // Load the EmulatorJS loader AFTER the variables are set
       const s = document.createElement('script');
@@ -118,11 +125,13 @@
 
     boot();
   </script>
+
+  <!-- particles background (after your scripts is fine) -->
   <script src="assets/particles.min.js"></script>
-<script>
-  particlesJS.load('particles-js', 'assets/particles.json', () => {
-    console.log('particles loaded');
-  });
-</script>
+  <script>
+    particlesJS.load('particles-js', 'assets/particles.json', () => {
+      console.log('particles loaded');
+    });
+  </script>
 </body>
 </html>
