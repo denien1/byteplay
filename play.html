@@ -56,12 +56,27 @@
     const params = new URL(location.href).searchParams;
     const id = params.get('id') || '';
 
+    // Map friendly/system tags → real EmulatorJS core IDs
+    function resolveCore(tag) {
+      if (!tag) return null;
+      tag = String(tag).toLowerCase();
+      switch (tag) {
+        case 'gba':        return 'mgba';
+        case 'gb':         return 'gambatte';
+        case 'gbc':        return 'gambatte';
+        case 'snes':       return 'snes9x';
+        case 'atari2600':  return 'stella2014';
+        case 'nes':        return 'nestopia'; // or 'fceumm'
+        default:           return tag;        // already a valid id
+      }
+    }
+
     async function boot() {
       let meta = null;
       try {
         const res = await fetch('games.json', { cache: 'no-store' });
         const data = await res.json();
-        // no Neo Geo in this site anymore
+        // supported systems only
         const cleaned = (data.games || []).filter(g => ['gba','snes','atari2600'].includes(g.system));
         meta = cleaned.find(g => g.id === id);
       } catch (e) {
@@ -79,23 +94,32 @@
           region: '—'
         });
         document.getElementById('title').textContent = 'Bring Your Own ROM';
-        document.getElementById('details').innerHTML = `<h2>Load a ROM</h2><p>Select a ROM file (.gba, .gbc, .gb, .sfc/.smc, .nes, .a26, .zip). It runs fully in your browser.</p>`;
+        document.getElementById('details').innerHTML =
+          `<h2>Load a ROM</h2><p>Select a ROM file (.gba, .gbc, .gb, .sfc/.smc, .nes, .a26, .zip). It runs fully in your browser.</p>`;
+
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = '.gba,.gbc,.gb,.sfc,.smc,.nes,.zip,.a26';
         input.className = 'btn';
         input.style.margin = '12px 0';
         document.querySelector('.toolbar').prepend(input);
+
         input.onchange = () => {
           const f = input.files?.[0]; if (!f) return;
-          setupAspectByCore(guessCore(f.name));
+          const friendly = guessCore(f.name);
+          const coreId   = resolveCore(friendly);
+          setupAspectByCore(friendly);
+
+          // EmulatorJS variables BEFORE loader.js
           window.EJS_player      = '#game';
-          window.EJS_core        = guessCore(f.name);
+          window.EJS_core        = coreId;
           window.EJS_gameUrl     = URL.createObjectURL(f);
           window.EJS_pathtodata  = 'data/';
           window.EJS_threads     = false; // GH Pages
+
           loadLoader();
         };
+
         wireToolbar();
         return;
       }
@@ -106,15 +130,14 @@
       document.getElementById('title').textContent = meta.title || '';
       renderSidebar(meta);
       renderDetails(meta);
-      setupAspectByCore(meta.core);
+      setupAspectByCore(meta.core || meta.system);
 
       // EmulatorJS variables BEFORE loader.js
       window.EJS_player      = '#game';
-      window.EJS_core        = meta.core;           // "gba" | "snes" | "atari2600"
+      window.EJS_core        = resolveCore(meta.core || meta.system); // << important
       window.EJS_gameUrl     = meta.rom;            // e.g., roms/gba/pokemon-unbound.gba
       window.EJS_pathtodata  = 'data/';
       window.EJS_threads     = false;               // GitHub Pages
-      // (no BIOS now; Neo Geo removed)
 
       loadLoader();
       wireToolbar();
@@ -137,15 +160,16 @@
       if (n.endsWith('.sfc') || n.endsWith('.smc')) return 'snes';
       if (n.endsWith('.nes')) return 'nes';
       if (n.endsWith('.a26')) return 'atari2600';
-      if (n.endsWith('.zip')) return 'gba'; // default to gba for byor zips to avoid removed cores
+      if (n.endsWith('.zip')) return 'gba'; // default to gba for BYOR zips
       return 'gba';
     }
 
     function setupAspectByCore(core){
+      core = String(core||'').toLowerCase();
       const wrap = document.getElementById('emuWrap');
       wrap.classList.remove('ar-3x2','ar-4x3');
-      // GBA ~3:2 ; SNES/Atari ~4:3 (approx to match gbapokemon.com visual)
-      if (core === 'gba') wrap.classList.add('ar-3x2');
+      // GBA ~3:2 ; SNES/Atari ~4:3
+      if (core === 'gba' || core === 'mgba') wrap.classList.add('ar-3x2');
       else wrap.classList.add('ar-4x3');
     }
 
