@@ -63,7 +63,7 @@
       "year": 1990,
       "genre": "Platformer",
       "region": "USA",
-      "cover": "covers/smw.jpg",
+      "cover": "covers/smw.png",
       "rom": "roms/snes/smw.sfc",
       "description": "Mario and Yoshi team up across Dinosaur Land in this SNES classic."
     },
