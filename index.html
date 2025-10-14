@@ -5,24 +5,26 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>BytePlay — Instant classics, in your browser</title>
   <meta name="description" content="Play GBA, SNES and Atari 2600 games instantly in your browser.">
-  <link rel="stylesheet" href="styles.css"/>
   <link rel="icon" href="assets/favicon.svg">
+  <link rel="preload" href="assets/fonts/nintendo/Nintendo.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-  <!-- background particles -->
+  <!-- particles background -->
   <div id="particles-js"></div>
 
   <div class="container">
     <header class="header">
-      <a class="brand" href="./">
-        <img src="assets/logo.svg" alt="BytePlay" />
+      <a class="brand" href="./" title="Return Home">
+        <img src="assets/logo.svg" alt="BytePlay">
         <div class="brand-text">
-          <b>BytePlay</b>
+          <b class="brand-title">BytePlay</b>
           <small>Instant classics, in your browser.</small>
         </div>
       </a>
       <nav class="nav">
         <a class="btn ghost active" href="./" aria-current="page">Home</a>
+
         <div class="dropdown">
           <button id="sysBtn" class="btn ghost">Systems ▾</button>
           <div class="menu" id="sysMenu">
@@ -32,16 +34,42 @@
             <a href="#" data-sys="atari2600">Atari 2600</a>
           </div>
         </div>
-        <a class="btn ghost" href="play.html?id=byor" title="Bring Your Own ROM">BYOR</a>
+
+        <a class="btn ghost" href="play.html?id=byor" title="Upload your own ROM">Upload ROM</a>
+        <a class="btn ghost" href="about.html">About</a>
+        <a class="btn ghost" href="contact.html">Contact</a>
       </nav>
     </header>
 
-    <section class="hero">
+    <section class="hero hero--center">
       <h1>Pick a classic. Press start.</h1>
       <p>Click a cover to start playing immediately. Save states and settings live in your browser.</p>
       <div class="hero-actions">
-        <a href="./" class="btn primary">Home</a>
-        <a href="play.html?id=byor" class="btn">Load my own ROM</a>
+        <a href="./" class="btn primary">Browse all Games</a>
+
+        <!-- Share bar -->
+        <div class="sharebar" aria-label="Share">
+          <a id="share-x" class="iconbtn" href="#" title="Share on X" target="_blank" rel="noopener" aria-label="Share on X">
+            <!-- X icon -->
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M16.98 3h3.02l-6.6 7.53L21 21h-5.9l-4.62-6.03L5 21H2l7.1-8.09L3 3h6l4.17 5.61L16.98 3Zm-2.07 16h1.67L7.13 5H5.38l9.53 14Z"/></svg>
+          </a>
+          <a id="share-fb" class="iconbtn" href="#" title="Share on Facebook" target="_blank" rel="noopener" aria-label="Share on Facebook">
+            <!-- FB icon -->
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06C2 17.08 5.66 21.2 10.44 22v-7.02H7.9v-2.92h2.54V9.85c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.92h-2.34V22C18.34 21.2 22 17.08 22 12.06Z"/></svg>
+          </a>
+          <a id="share-tt" class="iconbtn" href="#" title="Share on TikTok" target="_blank" rel="noopener" aria-label="Share on TikTok">
+            <!-- TikTok icon (glyph) -->
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M21 8.5a7.24 7.24 0 0 1-4-1.22v7.15a5.57 5.57 0 1 1-5.57-5.57c.2 0 .4.01.6.04v2.95a2.64 2.64 0 1 0 1.86 2.53V2h2.3c.26 1.72 1.58 3.15 3.21 3.6V8.5Z"/></svg>
+          </a>
+          <button id="share-copy" class="iconbtn" title="Copy Link" aria-label="Copy Link">
+            <!-- Copy icon -->
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1Zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2Zm0 16H8V7h11v14Z"/></svg>
+          </button>
+          <button id="share-native" class="iconbtn" title="Share…" aria-label="Share to…">
+            <!-- External/share icon -->
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M14 3h7v7h-2V6.41l-7.29 7.3-1.42-1.42 7.3-7.29H14V3ZM5 5h7v2H7v10h10v-5h2v7H5V5Z"/></svg>
+          </button>
+        </div>
       </div>
     </section>
 
@@ -49,11 +77,8 @@
       <input id="q" placeholder="Search title or genre…" aria-label="Search games">
       <select id="year" aria-label="Filter by year">
         <option value="">All years</option>
-        <option>1982</option>
-        <option>1990</option>
-        <option>2014</option>
-        <option>2018</option>
-        <option>2020</option>
+        <option>1982</option><option>1990</option><option>1991</option><option>1994</option>
+        <option>2014</option><option>2018</option><option>2020</option>
       </select>
       <button id="reset" class="btn">Reset</button>
     </div>
@@ -82,10 +107,10 @@
   async function load(){
     const res = await fetch('games.json', {cache:'no-store'});
     const data = await res.json();
-    // REMOVE Neo Geo forever: filter out anything not in the 3 systems we support
+    // Supported systems only
     all = (data.games||[]).filter(g => ['gba','snes','atari2600'].includes(g.system));
     filtered = [...all];
-    render(); wire();
+    render(); wire(); wireShare();
   }
 
   function apply(){
@@ -109,7 +134,6 @@
     const slice=filtered.slice(start,start+PAGE);
 
     count.textContent = `${total} game${total!==1?'s':''} found`;
-    // Clicking a card goes DIRECTLY to play.html
     grid.innerHTML = slice.map(g=>`
       <a class="card" href="play.html?id=${g.id}" title="Play ${g.title}">
         <img class="cover" src="${g.cover}" alt="${g.title}">
@@ -139,13 +163,35 @@
     document.getElementById('prev').onclick = ()=>{ if(page>1){ page--; render(); } };
     document.getElementById('next').onclick = ()=>{ if((page*PAGE)<filtered.length){ page++; render(); } };
   }
+
+  function wireShare(){
+    const pageUrl = encodeURIComponent(location.href);
+    const title   = encodeURIComponent('BytePlay — Instant classics, in your browser');
+
+    document.getElementById('share-x').href  = `https://twitter.com/intent/tweet?url=${pageUrl}&text=${title}`;
+    document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+    document.getElementById('share-tt').href = `https://www.tiktok.com/share?url=${pageUrl}`;
+
+    document.getElementById('share-copy').onclick = async ()=>{
+      try { await navigator.clipboard.writeText(location.href); alert('Link copied!'); }
+      catch { alert('Copy failed.'); }
+    };
+
+    document.getElementById('share-native').onclick = async ()=>{
+      if (navigator.share) {
+        try { await navigator.share({title:'BytePlay', text:'Play retro games in your browser', url:location.href}); }
+        catch(_){ /* user canceled */ }
+      } else {
+        alert('Sharing not supported on this browser.');
+      }
+    };
+  }
+
   load();
   </script>
 
   <!-- particles -->
   <script src="assets/particles.min.js"></script>
-  <script>
-    particlesJS.load('particles-js', 'assets/particles.json', ()=>console.log('particles loaded'));
-  </script>
+  <script>particlesJS.load('particles-js', 'assets/particles.json', ()=>console.log('particles loaded'));</script>
 </body>
 </html>

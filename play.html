@@ -4,11 +4,12 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>BytePlay — Play</title>
-  <link rel="stylesheet" href="styles.css"/>
   <link rel="icon" href="assets/favicon.svg">
+  <link rel="preload" href="assets/fonts/nintendo/Nintendo.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-  <!-- background particles -->
+  <!-- particles background -->
   <div id="particles-js"></div>
 
   <div class="player-page container">
@@ -16,21 +17,21 @@
       <a class="brand" href="./" title="Return Home">
         <img src="assets/logo.svg" alt="BytePlay" />
         <div class="brand-text">
-          <b>BytePlay</b>
+          <b class="brand-title">BytePlay</b>
           <small>Instant classics, in your browser.</small>
         </div>
       </a>
       <nav class="nav">
         <a class="btn ghost" href="./">Home</a>
-        <a class="btn ghost" href="play.html?id=byor">BYOR</a>
+        <a class="btn ghost" href="play.html?id=byor">Upload ROM</a>
+        <a class="btn ghost" href="about.html">About</a>
+        <a class="btn ghost" href="contact.html">Contact</a>
       </nav>
     </header>
 
     <div class="play-layout">
-      <!-- left sidebar -->
       <aside class="sidebar" id="sidebar"></aside>
 
-      <!-- main player -->
       <main class="play-main">
         <div class="toolbar">
           <span id="title" class="meta"></span>
@@ -39,12 +40,10 @@
           <button class="btn" id="restart">Restart</button>
         </div>
 
-        <!-- responsive player box (aspect ratio depends on system) -->
         <div class="emulator-wrap" id="emuWrap">
           <div id="game"></div>
         </div>
 
-        <!-- details below player like gbapokemon -->
         <section class="details" id="details"></section>
       </main>
     </div>
@@ -56,7 +55,6 @@
     const params = new URL(location.href).searchParams;
     const id = params.get('id') || '';
 
-    // Map friendly/system tags → real EmulatorJS core IDs
     function resolveCore(tag) {
       if (!tag) return null;
       tag = String(tag).toLowerCase();
@@ -66,8 +64,8 @@
         case 'gbc':        return 'gambatte';
         case 'snes':       return 'snes9x';
         case 'atari2600':  return 'stella2014';
-        case 'nes':        return 'nestopia'; // or 'fceumm'
-        default:           return tag;        // already a valid id
+        case 'nes':        return 'nestopia';
+        default:           return tag;
       }
     }
 
@@ -76,24 +74,20 @@
       try {
         const res = await fetch('games.json', { cache: 'no-store' });
         const data = await res.json();
-        // supported systems only
         const cleaned = (data.games || []).filter(g => ['gba','snes','atari2600'].includes(g.system));
         meta = cleaned.find(g => g.id === id);
       } catch (e) {
         fail('Failed to load games.json'); console.error(e); return;
       }
 
-      // BYOR
+      // Upload ROM (BYOR)
       if (!meta && id === 'byor') {
         renderSidebar({
-          title: 'Bring Your Own ROM',
+          title: 'Upload ROM',
           cover: 'assets/byor-cover.svg',
-          system: 'custom',
-          year: '—',
-          genre: '—',
-          region: '—'
+          system: 'custom', year: '—', genre: '—', region: '—'
         });
-        document.getElementById('title').textContent = 'Bring Your Own ROM';
+        document.getElementById('title').textContent = 'Upload ROM';
         document.getElementById('details').innerHTML =
           `<h2>Load a ROM</h2><p>Select a ROM file (.gba, .gbc, .gb, .sfc/.smc, .nes, .a26, .zip). It runs fully in your browser.</p>`;
 
@@ -110,34 +104,30 @@
           const coreId   = resolveCore(friendly);
           setupAspectByCore(friendly);
 
-          // EmulatorJS variables BEFORE loader.js
           window.EJS_player      = '#game';
           window.EJS_core        = coreId;
           window.EJS_gameUrl     = URL.createObjectURL(f);
           window.EJS_pathtodata  = 'data/';
-          window.EJS_threads     = false; // GH Pages
+          window.EJS_threads     = false;
 
           loadLoader();
         };
 
-        wireToolbar();
-        return;
+        wireToolbar(); return;
       }
 
       if (!meta) { fail('Game not found.'); wireToolbar(); return; }
 
-      // UI
       document.getElementById('title').textContent = meta.title || '';
       renderSidebar(meta);
       renderDetails(meta);
       setupAspectByCore(meta.core || meta.system);
 
-      // EmulatorJS variables BEFORE loader.js
       window.EJS_player      = '#game';
-      window.EJS_core        = resolveCore(meta.core || meta.system); // << important
-      window.EJS_gameUrl     = meta.rom;            // e.g., roms/gba/pokemon-unbound.gba
+      window.EJS_core        = resolveCore(meta.core || meta.system);
+      window.EJS_gameUrl     = meta.rom;
       window.EJS_pathtodata  = 'data/';
-      window.EJS_threads     = false;               // GitHub Pages
+      window.EJS_threads     = false;
 
       loadLoader();
       wireToolbar();
@@ -160,7 +150,7 @@
       if (n.endsWith('.sfc') || n.endsWith('.smc')) return 'snes';
       if (n.endsWith('.nes')) return 'nes';
       if (n.endsWith('.a26')) return 'atari2600';
-      if (n.endsWith('.zip')) return 'gba'; // default to gba for BYOR zips
+      if (n.endsWith('.zip')) return 'gba';
       return 'gba';
     }
 
@@ -168,7 +158,6 @@
       core = String(core||'').toLowerCase();
       const wrap = document.getElementById('emuWrap');
       wrap.classList.remove('ar-3x2','ar-4x3');
-      // GBA ~3:2 ; SNES/Atari ~4:3
       if (core === 'gba' || core === 'mgba') wrap.classList.add('ar-3x2');
       else wrap.classList.add('ar-4x3');
     }
@@ -205,8 +194,6 @@
 
   <!-- particles -->
   <script src="assets/particles.min.js"></script>
-  <script>
-    particlesJS.load('particles-js', 'assets/particles.json', ()=>console.log('particles loaded'));
-  </script>
+  <script>particlesJS.load('particles-js', 'assets/particles.json', ()=>console.log('particles loaded'));</script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-/* ---------- CSS Variables ---------- */
+/* ---------- Brand Variables ---------- */
 :root{
   --bg:#0d1117; --bg-2:#0b0f15; --card:#121826; --ink:#e6edf3; --ink-d:#9aa0aa;
   --acc:#6ee7ff; --btn:#1f6feb; --btn-ink:#fff;
@@ -8,13 +8,18 @@
 /* ---------- Reset ---------- */
 *{box-sizing:border-box} html,body{height:100%}
 html{background:var(--bg)}
-body{margin:0;color:var(--ink);font:14px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+body{margin:0;color:var(--ink);font:14px/1.6 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
 img{max-width:100%;display:block}
 
-/* ---------- Particles behind everything ---------- */
-#particles-js{
-  position:fixed; inset:0; z-index:0; pointer-events:none;
+/* ---------- Webfont (Nintendo-style) ---------- */
+@font-face{
+  font-family:"Nintendo";
+  src: url("assets/fonts/nintendo/Nintendo.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap;
 }
+
+/* ---------- Particles behind everything ---------- */
+#particles-js{position:fixed; inset:0; z-index:0; pointer-events:none;}
 .container, .player-page{position:relative; z-index:1}
 
 /* ---------- Layout ---------- */
@@ -22,6 +27,7 @@ img{max-width:100%;display:block}
 .header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
 .brand img{width:36px;height:36px}
+.brand-title{font-family:"Nintendo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; letter-spacing:.5px; font-size:22px; line-height:1;}
 .brand-text small{display:block;color:var(--ink-d);font-size:12px;margin-top:-2px}
 
 .nav{display:flex;align-items:center;gap:8px}
@@ -33,21 +39,33 @@ img{max-width:100%;display:block}
 
 /* ---------- Dropdown ---------- */
 .dropdown{position:relative}
-.dropdown .menu{display:none;position:absolute;right:0;top:110%;background:var(--card);border:1px solid #263248;border-radius:10px;min-width:160px;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:8px}
+.dropdown .menu{display:none;position:absolute;right:0;top:110%;background:var(--card);border:1px solid #263248;border-radius:10px;min-width:180px;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:8px}
 .dropdown .menu a{display:block;padding:8px 10px;color:var(--ink);text-decoration:none;border-radius:8px}
 .dropdown .menu a:hover{background:#171e2a}
 
 /* ---------- Hero ---------- */
-.hero{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(0,0,0,.0));border:1px solid #1f2838;border-radius:16px;padding:20px 18px;margin:8px 0 14px}
-.hero h1{margin:0 0 4px}
+.hero{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(0,0,0,.0));border:1px solid #1f2838;border-radius:16px;padding:22px;margin:8px 0 14px}
+.hero--center{ text-align:center; }
+.hero h1{margin:0 0 6px; font-family:"Nintendo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; letter-spacing:.5px; font-size:clamp(24px,4vw,36px); line-height:1.15;}
 .hero p{margin:0;color:var(--ink-d)}
-.hero-actions{margin-top:10px;display:flex;gap:8px}
+.hero-actions{margin-top:14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+/* Share bar */
+.sharebar{display:flex;gap:8px;align-items:center}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid #2b3343;border-radius:10px;background:#0f1521;color:#cfd6e4;text-decoration:none}
+.iconbtn:hover{filter:brightness(1.1)}
 
 /* ---------- Search & Grid ---------- */
 .search{display:flex;gap:8px;align-items:center;margin:10px 0}
 .search input,.search select{background:#0f1521;border:1px solid #263248;border-radius:10px;color:var(--ink);padding:8px 10px}
 .meta{color:var(--ink-d)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin:12px 0}
+
+/* 4-per-row grid on desktop */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:12px 0}
+@media (max-width:1000px){ .grid{grid-template-columns:repeat(3,1fr);} }
+@media (max-width:720px){  .grid{grid-template-columns:repeat(2,1fr);} }
+@media (max-width:430px){  .grid{grid-template-columns:1fr;} }
+
 .card{background:var(--card);border:1px solid #1c2536;border-radius:14px;overflow:hidden;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;transition:transform .1s ease, box-shadow .1s ease}
 .card:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(0,0,0,.35)}
 .card .cover{width:100%;aspect-ratio:3/4;object-fit:cover;background:#000}
@@ -68,22 +86,22 @@ img{max-width:100%;display:block}
 
 .emulator-wrap{background:#000;border:1px solid #1c2536;border-radius:14px;overflow:hidden;position:relative}
 .emulator-wrap > #game{position:absolute;inset:0}
-
-/* aspect ratios similar to gbapokemon.com visual */
 .emulator-wrap.ar-3x2{padding-top:66.66%} /* GBA */
 .emulator-wrap.ar-4x3{padding-top:75%}     /* SNES/Atari */
 
-/* details section below player */
 .details{background:var(--card);border:1px solid #1c2536;border-radius:14px;padding:14px;margin-top:12px}
 .dim{color:var(--ink-d)}
 .err{background:#2c1620;border:1px solid #512437;color:#ffd6df;padding:10px;border-radius:12px}
 
-/* footer */
+/* ---------- Page cards ---------- */
+.page.card-pad{background:var(--card);border:1px solid #1c2536;border-radius:14px;padding:18px}
+
+/* ---------- Footer ---------- */
 footer{margin:20px 0;color:var(--ink-d)}
 .link{color:var(--acc);text-decoration:none}
 .link:hover{text-decoration:underline}
 
-/* small screens */
+/* ---------- Responsive ---------- */
 @media (max-width:900px){
   .play-layout{grid-template-columns:1fr}
   .sidebar{order:2}
