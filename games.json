@@ -80,6 +80,71 @@
       "description": "Dodge pits and swing on vines in Activision’s legendary Atari adventure."
     },
 
+{
+  "id": "snes-alttp",
+  "title": "The Legend of Zelda: A Link to the Past",
+  "system": "snes",
+  "core": "snes9x",
+  "year": 1991,
+  "genre": "Action-Adventure",
+  "region": "USA",
+  "cover": "covers/snes-alttp.jpg",
+  "rom": "roms/snes/alttp.sfc",
+  "description": "Link’s 16-bit classic with the Light and Dark Worlds and series-defining puzzles."
+},
+
+{
+  "id": "snes-starfox2",
+  "title": "Star Fox 2",
+  "system": "snes",
+  "core": "snes9x",
+  "year": 2017,
+  "genre": "Shooter",
+  "region": "USA/Europe",
+  "cover": "covers/snes-starfox2.jpg",
+  "rom": "roms/snes/starfox2.sfc",
+  "description": "The long-unreleased sequel featuring all-range battles and strategic defense of the Lylat system."
+},
+
+{
+  "id": "snes-supermetroid",
+  "title": "Super Metroid",
+  "system": "snes",
+  "core": "snes9x",
+  "year": 1994,
+  "genre": "Action-Adventure",
+  "region": "Japan/USA",
+  "cover": "covers/snes-supermetroid.jpg",
+  "rom": "roms/snes/super-metroid.sfc",
+  "description": "Exploration masterpiece on Planet Zebes with atmospheric soundtrack and tight controls."
+},
+
+{
+  "id": "snes-aerobizsupersonic",
+  "title": "Aerobiz Supersonic",
+  "system": "snes",
+  "core": "snes9x",
+  "year": 1994,
+  "genre": "Simulation/Strategy",
+  "region": "USA",
+  "cover": "covers/snes-aerobiz-supersonic.jpg",
+  "rom": "roms/snes/aerobiz-supersonic.sfc",
+  "description": "Run an international airline through multiple eras—routes, fleets, politics, profits."
+},
+
+{
+  "id": "snes-dkc-rev2",
+  "title": "Donkey Kong Country (Rev 2)",
+  "system": "snes",
+  "core": "snes9x",
+  "year": 1994,
+  "genre": "Platformer",
+  "region": "USA",
+  "cover": "covers/snes-dkc-rev2.jpg",
+  "rom": "roms/snes/dkc-rev2.sfc",
+  "description": "Rare’s slick pre-rendered platformer—tight controls, secret-packed levels, thumping OST."
+},
+
     {
       "id": "byor",
       "title": "Bring Your Own ROM",
