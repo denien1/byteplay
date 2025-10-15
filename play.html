@@ -4,9 +4,8 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>BytePlay — Play</title>
-  <link rel="icon" href="assets/favicon.svg">
-  <link rel="preload" href="assets/fonts/nintendo/Nintendo.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css"/>
+  <link rel="icon" href="assets/favicon.svg">
 </head>
 <body>
   <!-- particles background -->
@@ -30,8 +29,10 @@
     </header>
 
     <div class="play-layout">
+      <!-- left sidebar -->
       <aside class="sidebar" id="sidebar"></aside>
 
+      <!-- main player -->
       <main class="play-main">
         <div class="toolbar">
           <span id="title" class="meta"></span>
@@ -40,10 +41,37 @@
           <button class="btn" id="restart">Restart</button>
         </div>
 
+        <!-- responsive player box (aspect ratio depends on system) -->
         <div class="emulator-wrap" id="emuWrap">
-          <div id="game"></div>
+          <!-- emulator target -->
+          <div id="game" aria-live="polite"></div>
+
+          <!-- start overlay -->
+          <div class="bp-overlay" id="startOverlay" role="dialog" aria-label="Start game">
+            <button class="bp-playbtn" id="startBtn">
+              <!-- play icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5v14l11-7z"></path>
+              </svg>
+              <span class="play">Play</span>
+              <span class="now">Now</span>
+            </button>
+          </div>
+
+          <!-- loading overlay -->
+          <div class="bp-overlay" id="loadingOverlay" role="status" aria-live="polite" hidden>
+            <div class="bp-liquid-loader">
+              <div class="bp-loader-track">
+                <div class="bp-liquid-fill"></div>
+              </div>
+              <div class="bp-loading-text">
+                Loading<span class="bp-dot">.</span><span class="bp-dot">.</span><span class="bp-dot">.</span>
+              </div>
+            </div>
+          </div>
         </div>
 
+        <!-- details below player -->
         <section class="details" id="details"></section>
       </main>
     </div>
@@ -55,89 +83,112 @@
     const params = new URL(location.href).searchParams;
     const id = params.get('id') || '';
 
-    function resolveCore(tag) {
-      if (!tag) return null;
-      tag = String(tag).toLowerCase();
-      switch (tag) {
-        case 'gba':        return 'mgba';
-        case 'gb':         return 'gambatte';
-        case 'gbc':        return 'gambatte';
-        case 'snes':       return 'snes9x';
-        case 'atari2600':  return 'stella2014';
-        case 'nes':        return 'nestopia';
-        default:           return tag;
-      }
-    }
+    let meta = null;
+    let started = false;
 
     async function boot() {
-      let meta = null;
       try {
         const res = await fetch('games.json', { cache: 'no-store' });
         const data = await res.json();
+        // site excludes Neo Geo
         const cleaned = (data.games || []).filter(g => ['gba','snes','atari2600'].includes(g.system));
         meta = cleaned.find(g => g.id === id);
       } catch (e) {
         fail('Failed to load games.json'); console.error(e); return;
       }
 
-      // Upload ROM (BYOR)
+      // BYOR
       if (!meta && id === 'byor') {
+        document.getElementById('title').textContent = 'Bring Your Own ROM';
         renderSidebar({
-          title: 'Upload ROM',
+          title: 'Bring Your Own ROM',
           cover: 'assets/byor-cover.svg',
-          system: 'custom', year: '—', genre: '—', region: '—'
+          system: 'custom',
+          year: '—',
+          genre: '—',
+          region: '—'
         });
-        document.getElementById('title').textContent = 'Upload ROM';
-        document.getElementById('details').innerHTML =
-          `<h2>Load a ROM</h2><p>Select a ROM file (.gba, .gbc, .gb, .sfc/.smc, .nes, .a26, .zip). It runs fully in your browser.</p>`;
+        document.getElementById('details').innerHTML = `<h2>Load a ROM</h2><p>Select a ROM file (.gba, .gbc, .gb, .sfc/.smc, .nes, .a26, .zip). It runs fully in your browser.</p>`;
+        setupAspectByCore('gba');
 
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.gba,.gbc,.gb,.sfc,.smc,.nes,.zip,.a26';
-        input.className = 'btn';
-        input.style.margin = '12px 0';
-        document.querySelector('.toolbar').prepend(input);
-
-        input.onchange = () => {
-          const f = input.files?.[0]; if (!f) return;
-          const friendly = guessCore(f.name);
-          const coreId   = resolveCore(friendly);
-          setupAspectByCore(friendly);
-
-          window.EJS_player      = '#game';
-          window.EJS_core        = coreId;
-          window.EJS_gameUrl     = URL.createObjectURL(f);
-          window.EJS_pathtodata  = 'data/';
-          window.EJS_threads     = false;
-
-          loadLoader();
+        // BYOR flow: on click, let user pick a file then start
+        document.getElementById('startBtn').onclick = () => {
+          const picker = document.createElement('input');
+          picker.type = 'file';
+          picker.accept = '.gba,.gbc,.gb,.sfc,.smc,.nes,.zip,.a26';
+          picker.onchange = () => {
+            const f = picker.files?.[0];
+            if (!f) return;
+            const core = guessCore(f.name);
+            setupAspectByCore(core);
+            begin({ core, romUrl: URL.createObjectURL(f) });
+          };
+          picker.click();
         };
 
-        wireToolbar(); return;
+        wireToolbar();
+        return;
       }
 
       if (!meta) { fail('Game not found.'); wireToolbar(); return; }
 
+      // UI
       document.getElementById('title').textContent = meta.title || '';
       renderSidebar(meta);
       renderDetails(meta);
-      setupAspectByCore(meta.core || meta.system);
+      setupAspectByCore(meta.core);
 
-      window.EJS_player      = '#game';
-      window.EJS_core        = resolveCore(meta.core || meta.system);
-      window.EJS_gameUrl     = meta.rom;
-      window.EJS_pathtodata  = 'data/';
-      window.EJS_threads     = false;
+      // Wire the start button to start the known game
+      document.getElementById('startBtn').onclick = () => begin({
+        core: meta.core,
+        romUrl: meta.rom,
+        biosUrl: meta.bios || null
+      });
 
-      loadLoader();
       wireToolbar();
     }
 
-    function loadLoader(){
+    function begin({ core, romUrl, biosUrl=null }){
+      if (started) return;
+      started = true;
+
+      // Overlays
+      document.getElementById('startOverlay').hidden = true;
+      document.getElementById('loadingOverlay').hidden = false;
+
+      // REQUIRED: set EJS_* BEFORE loading loader.js
+      window.EJS_player      = '#game';
+      window.EJS_core        = core;        // "gba" | "snes" | "atari2600"
+      window.EJS_gameUrl     = romUrl;
+      window.EJS_pathtodata  = 'data/';
+      window.EJS_threads     = false;       // static hosting (GitHub Pages)
+      if (biosUrl) window.EJS_biosUrl = biosUrl;
+
+      // Load the EmulatorJS loader AFTER vars are set
       const s = document.createElement('script');
       s.src = 'data/loader.js';
-      s.onerror = ()=> fail('Could not load data/loader.js — ensure /data is present.');
+      s.onerror = () => fail('Could not load data/loader.js — ensure /data exists and paths are correct.');
       document.body.appendChild(s);
+
+      // Detect when emulator draws (iframe/canvas appears in #game)
+      const target = document.getElementById('game');
+      const obs = new MutationObserver(()=>{
+        if (target.children.length > 0) {
+          // Hide loader shortly after something appears
+          setTimeout(()=> {
+            document.getElementById('loadingOverlay').hidden = true;
+            obs.disconnect();
+          }, 300);
+        }
+      });
+      obs.observe(target, { childList: true, subtree: true });
+
+      // Safety timeout: hide loader after 10s even if observer misses
+      setTimeout(()=> {
+        if (!document.getElementById('loadingOverlay').hidden) {
+          document.getElementById('loadingOverlay').hidden = true;
+        }
+      }, 10000);
     }
 
     function fail(msg){ document.getElementById('details').innerHTML = `<div class="err">${msg}</div>`; }
@@ -150,16 +201,15 @@
       if (n.endsWith('.sfc') || n.endsWith('.smc')) return 'snes';
       if (n.endsWith('.nes')) return 'nes';
       if (n.endsWith('.a26')) return 'atari2600';
-      if (n.endsWith('.zip')) return 'gba';
+      if (n.endsWith('.zip')) return 'gba'; // default zip to gba now that neogeo is removed
       return 'gba';
     }
 
     function setupAspectByCore(core){
-      core = String(core||'').toLowerCase();
       const wrap = document.getElementById('emuWrap');
       wrap.classList.remove('ar-3x2','ar-4x3');
-      if (core === 'gba' || core === 'mgba') wrap.classList.add('ar-3x2');
-      else wrap.classList.add('ar-4x3');
+      // GBA ~3:2 ; SNES/Atari ~4:3 (matching your site visuals)
+      if (core === 'gba') wrap.classList.add('ar-3x2'); else wrap.classList.add('ar-4x3');
     }
 
     function renderSidebar(g){
@@ -176,7 +226,7 @@
     function renderDetails(g){
       document.getElementById('details').innerHTML = `
         <h2>${g.title}</h2>
-        <p class="dim"> ${(g.system||'').toUpperCase()} • ${g.year||''} ${g.genre?('• '+g.genre):''} ${g.region?('• '+g.region):''}</p>
+        <p class="dim">${(g.system||'').toUpperCase()} • ${g.year||''} ${g.genre?('• '+g.genre):''} ${g.region?('• '+g.region):''}</p>
         ${g.description ? `<p>${g.description}</p>` : `<p>No description available.</p>`}
       `;
     }
@@ -194,38 +244,33 @@
 
   <!-- particles -->
   <script src="assets/particles.min.js"></script>
-  <script>particlesJS.load('particles-js', 'assets/particles.json', ()=>console.log('particles loaded'));</script>
+  <script>
+    particlesJS.load('particles-js', 'assets/particles.json', ()=>console.log('particles loaded'));
+  </script>
+
+  <!-- Optional: wave the details title -->
+  <script>
+    (function(){
+      const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function waveify(el){
+        if(!el || el.classList.contains('wave-text')) return;
+        const text = el.textContent.trim();
+        el.textContent = '';
+        el.classList.add('wave-text');
+        const baseDelay = 0.06;
+        [...text].forEach((ch,i)=>{
+          const span = document.createElement('span');
+          span.className = 'wave-char';
+          span.textContent = ch;
+          if(!reduceMotion) span.style.animationDelay = (i * baseDelay) + 's';
+          el.appendChild(span);
+        });
+      }
+      document.addEventListener('DOMContentLoaded', ()=>{
+        const h2 = document.querySelector('.details h2');
+        if (h2) waveify(h2);
+      });
+    })();
+  </script>
 </body>
 </html>
-
-<!-- Wave titles script -->
-<script>
-(function(){
-  const selectors = [
-    '.brand-title',    // header brand text
-    '.hero h1'         // home hero
-  ];
-  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function waveify(el){
-    if(!el || el.classList.contains('wave-text')) return;
-    const text = el.textContent;
-    el.textContent = '';
-    el.classList.add('wave-text');
-    const baseDelay = 0.08; // seconds between letters
-    [...text].forEach((ch,i)=>{
-      const span = document.createElement('span');
-      span.className = 'wave-char';
-      span.textContent = ch;
-      if(!reduceMotion) span.style.animationDelay = (i * baseDelay) + 's';
-      el.appendChild(span);
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', ()=>{
-    selectors.forEach(sel=>{
-      document.querySelectorAll(sel).forEach(waveify);
-    });
-  });
-})();
-</script>
