@@ -138,3 +138,79 @@ footer{margin:20px 0;color:var(--ink-d)}
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-20px); }
 }
+
+/* ---------- Hero sizing & centering ---------- */
+.hero--center{
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:48px 16px 24px;
+}
+
+.hero-title{
+  margin:0 0 6px;
+  font-family:"Nintendo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  letter-spacing:1px;
+  font-size:clamp(42px, 9vw, 96px);
+  line-height:1.08;
+  text-shadow: 0 2px 10px rgba(0,0,0,.35);
+}
+
+.hero-subtitle{
+  margin:4px 0 6px;
+  color: var(--ink, #e6edf3);
+  font-size:clamp(21px, 4.5vw, 48px); /* 1/2 of 96 */
+  line-height:1.15;
+  text-shadow: 0 1px 6px rgba(0,0,0,.25);
+}
+
+.hero-tagline{
+  margin:0;
+  color: var(--ink-d, #9aa0aa);
+  font-size:clamp(21px, 4.5vw, 48px);
+  line-height:1.25;
+  max-width: 1000px;
+}
+
+.hero-actions{ margin-top:12px; }
+
+/* ---------- Wave effect (safe; does not touch body) ---------- */
+.wave-text{
+  display:inline-block;
+  font-size:inherit; /* size controlled by hero-title */
+  line-height:1.1;
+  letter-spacing:1px;
+}
+
+.wave-char{
+  display:inline-block;
+  animation: wave 2s ease-in-out infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .wave-char{ animation:none !important; }
+}
+
+@keyframes wave{
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-20px); }
+}
+
+/* ---------- Grid: 4 per row on wide screens ---------- */
+.grid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap:14px;
+}
+@media (min-width: 720px){
+  .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+@media (min-width: 1024px){
+  .grid{ grid-template-columns: repeat(4, minmax(0,1fr)); } /* 4 per row */
+}
+
+/* Keep your existing .card, .cover, .btn, etc. styles as-is */
