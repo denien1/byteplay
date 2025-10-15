@@ -47,7 +47,7 @@
           <div id="game"></div>
 
           <!-- liquid loader (hidden until click) -->
-          <div id="loader" class="liquid-loader" style="display:none">
+          <div id="loader" class="liquid-loader">
             <div class="loader-track">
               <div class="liquid-fill"></div>
             </div>
@@ -85,6 +85,49 @@
     const id = params.get('id') || '';
     let meta = null;
 
+    // wait for a CSS transition on an element
+    function waitTransition(el){
+      return new Promise(res=>{
+        const done=()=>{ el.removeEventListener('transitionend',done); res(); };
+        el.addEventListener('transitionend',done,{once:true});
+      });
+    }
+
+    function showLoading(){
+      const wrap = document.getElementById('loader');
+      const bar  = wrap.querySelector('.liquid-fill');
+      wrap.style.display = 'flex';
+      // force reflow so width transition starts
+      // eslint-disable-next-line no-unused-expressions
+      bar.offsetWidth;
+      bar.classList.add('fill-animate');
+    }
+    function hideLoading(){
+      const wrap = document.getElementById('loader');
+      const bar  = wrap.querySelector('.liquid-fill');
+      bar.classList.remove('fill-animate');
+      wrap.style.display = 'none';
+    }
+
+    function loadLoader(){
+      return new Promise((resolve,reject)=>{
+        const s = document.createElement('script');
+        s.src = 'data/loader.js';
+        s.onload = resolve;
+        s.onerror = ()=>reject(new Error('Could not load data/loader.js — ensure /data exists.'));
+        document.body.appendChild(s);
+      });
+    }
+
+    async function startGame(){
+      showLoading();
+      const bar = document.querySelector('.liquid-fill');
+      const loaderPromise = loadLoader();   // start loading emulator in parallel
+      await waitTransition(bar);            // wait for bar to reach 100%
+      try { await loaderPromise; } catch(e){ fail(e.message); }
+      hideLoading();
+    }
+
     async function boot(){
       try{
         const r = await fetch('games.json', { cache: 'no-store' });
@@ -111,17 +154,16 @@
         input.className='btn';
         input.style.margin='12px 0';
         document.querySelector('.toolbar').prepend(input);
-        input.onchange = () => {
+        input.onchange = async () => {
           const f = input.files?.[0]; if(!f) return;
           const core = guessCore(f.name);
           setupAspectByCore(core);
-          showLoading();
-          window.EJS_player = '#game';
-          window.EJS_core   = core;
-          window.EJS_gameUrl = URL.createObjectURL(f);
+          window.EJS_player   = '#game';
+          window.EJS_core     = core;
+          window.EJS_gameUrl  = URL.createObjectURL(f);
           window.EJS_pathtodata = 'data/';
-          window.EJS_threads = false;
-          loadLoader();
+          window.EJS_threads  = false;
+          await startGame(); // bar fills, emulator loads, then starts
         };
         wireToolbar();
         return;
@@ -137,35 +179,24 @@
       document.getElementById('title').textContent = meta.title || '';
       renderSidebar(meta);
       renderDetails(meta);
-      const coreFromMeta = normalizeCore(meta.core);
-      const coreFinal = coreFromMeta || guessCore(meta.rom || '');
+      const coreFinal = normalizeCore(meta.core) || guessCore(meta.rom || '');
       setupAspectByCore(coreFinal);
 
-      // Prepare EJS vars (GitHub Pages safe)
+      // EJS variables (GitHub Pages safe)
       window.EJS_player     = '#game';
-      window.EJS_core       = coreFinal;         // guaranteed defined
-      window.EJS_gameUrl    = meta.rom;          // rom path
+      window.EJS_core       = coreFinal;
+      window.EJS_gameUrl    = meta.rom;
       window.EJS_pathtodata = 'data/';
       window.EJS_threads    = false;
 
-      // START button: show loader only after click
+      // One click: hide button, fill bar, then start
       const startBtn = document.getElementById('startBtn');
-      startBtn.onclick = () => {
-        startBtn.disabled = true;
+      startBtn.onclick = async () => {
         startBtn.style.display = 'none';
-        showLoading();
-        loadLoader();
+        await startGame();
       };
 
       wireToolbar();
-    }
-
-    function loadLoader(){
-      const s = document.createElement('script');
-      s.src = 'data/loader.js';
-      s.onerror = () => fail('Could not load data/loader.js — ensure /data exists.');
-      s.onload  = () => hideLoading();
-      document.body.appendChild(s);
     }
 
     function fail(msg){
@@ -183,24 +214,17 @@
       if(n.endsWith('.sfc') || n.endsWith('.smc')) return 'snes';
       if(n.endsWith('.nes')) return 'nes';
       if(n.endsWith('.a26')) return 'atari2600';
-      return 'gba'; // safe default
+      return 'gba';
     }
-
     function normalizeCore(c){
       const k = (c||'').toLowerCase();
-      if(['gba','snes','atari2600','gb','gbc','nes'].includes(k)) return k;
-      return '';
+      return ['gba','snes','atari2600','gb','gbc','nes'].includes(k) ? k : '';
     }
-
     function setupAspectByCore(core){
       const wrap = document.getElementById('emuWrap');
       wrap.classList.remove('ar-3x2','ar-4x3');
-      if(core === 'gba') wrap.classList.add('ar-3x2'); else wrap.classList.add('ar-4x3');
+      (core === 'gba' ? wrap.classList.add('ar-3x2') : wrap.classList.add('ar-4x3'));
     }
-
-    function showLoading(){ document.getElementById('loader').style.display='flex'; }
-    function hideLoading(){ document.getElementById('loader').style.display='none'; }
-
     function renderSidebar(g){
       document.getElementById('sidebar').innerHTML = `
         <div class="side-card">
@@ -211,7 +235,6 @@
           <a class="btn wfull" href="./">Home</a>
         </div>`;
     }
-
     function renderDetails(g){
       const url = location.href;
       document.getElementById('details').innerHTML = `
@@ -237,7 +260,6 @@
         };
       });
     }
-
     function wireToolbar(){
       document.getElementById('fullscreen').onclick = () => {
         const el = document.querySelector('#game').parentElement;
