@@ -5,74 +5,29 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>About — BytePlay</title>
   <link rel="icon" href="assets/favicon.svg">
-  <link rel="preload" href="assets/fonts/nintendo/Nintendo.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/Nintendo.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
   <div id="particles-js"></div>
-
   <div class="container">
     <header class="header">
-      <a class="brand" href="./">
-        <img src="assets/logo.svg" alt="BytePlay">
-        <div class="brand-text">
-          <b class="brand-title">BytePlay</b>
-          <small>Instant classics, in your browser.</small>
-        </div>
-      </a>
+      <a class="brand" href="./"><img src="assets/logo.svg" alt="BytePlay"/><div class="brand-text"><b class="title-font">BytePlay</b><small>Instant classics, in your browser.</small></div></a>
       <nav class="nav">
         <a class="btn ghost" href="./">Home</a>
-        <a class="btn ghost" href="play.html?id=byor">Upload ROM</a>
-        <a class="btn ghost active" href="about.html" aria-current="page">About</a>
         <a class="btn ghost" href="contact.html">Contact</a>
       </nav>
     </header>
 
-    <section class="page card-pad">
-      <h1>About BytePlay</h1>
-      <p>BytePlay lets you enjoy classic games right in your browser—no installs, no fuss. We focus on fast loading, simple controls, and a clean experience that works on laptops and phones alike.</p>
-      <p>You can browse curated titles for GBA, SNES, and Atari 2600, or upload your own legally obtained ROMs to play privately in your browser.</p>
-      <p>Save data and settings are kept locally in your browser storage so you can pick up right where you left off.</p>
-      <p><a class="btn" href="./">Browse all Games</a></p>
+    <section class="details">
+      <h2 class="title-font">About BytePlay</h2>
+      <p>BytePlay makes it easy to play beloved classics in your browser. Pick a game, press start, and your save data stays in your browser—no accounts or installs required.</p>
+      <p>We’re fans building for fans: clean design, fast loading, and a growing catalog across GBA, SNES, and Atari 2600.</p>
     </section>
 
     <footer>© <a class="link" href="./">BytePlay</a></footer>
   </div>
-
   <script src="assets/particles.min.js"></script>
-  <script>particlesJS.load('particles-js', 'assets/particles.json')</script>
+  <script>particlesJS.load('particles-js','assets/particles.json',()=>{});</script>
 </body>
 </html>
-
-<!-- Wave titles script -->
-<script>
-(function(){
-  const selectors = [
-    '.brand-title',    // header brand text
-    '.page h1'         // About page title
-  ];
-  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function waveify(el){
-    if(!el || el.classList.contains('wave-text')) return;
-    const text = el.textContent;
-    el.textContent = '';
-    el.classList.add('wave-text');
-    const baseDelay = 0.08;
-    [...text].forEach((ch,i)=>{
-      const span = document.createElement('span');
-      span.className = 'wave-char';
-      span.textContent = ch;
-      if(!reduceMotion) span.style.animationDelay = (i * baseDelay) + 's';
-      el.appendChild(span);
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', ()=>{
-    selectors.forEach(sel=>{
-      document.querySelectorAll(sel).forEach(waveify);
-    });
-  });
-})();
-</script>
-

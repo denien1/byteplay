@@ -1,20 +1,61 @@
-<!doctype html><html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BytePlay — Game Details</title><link rel="stylesheet" href="styles.css"></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>BytePlay — Game Details</title>
+  <link rel="icon" href="assets/favicon.svg">
+  <link rel="preload" href="assets/Nintendo.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
   <div id="particles-js"></div>
-<div class="container">
-<header class="header"><div class="brand"><img src="assets/logo.svg"><b>BytePlay</b></div><nav class="nav"><a href="./">Home</a><a href="play.html?id=byor">BYOR</a></nav></header>
-<div id="content"></div><footer>© BytePlay</footer></div>
-<script>
-async function load(){const id=new URL(location.href).searchParams.get('id');const r=await fetch('games.json');const data=await r.json();const g=(data.games||[]).find(x=>x.id===id);const el=document.getElementById('content');
-if(!g){el.innerHTML='<div class="err">Game not found.</div>';return;}
-el.innerHTML=`<div style="display:grid;gap:20px;grid-template-columns:260px 1fr;margin-top:10px"><img class="cover" src="${g.cover}" alt="${g.title} cover"><div><h2>${g.title}</h2><div class="meta">${(g.system||'').toUpperCase()} • ${g.year||''} ${g.genre?('• '+g.genre):''}</div><div style="margin:10px 0;color:#9aa0aa">Region: ${g.region||'—'}</div><div style="display:flex;gap:10px"><a class="btn" href="play.html?id=${g.id}">▶ Play</a><a class="btn" href="./">Back</a></div></div></div>`;}
-load();
-</script>
-<script src="assets/particles.min.js"></script>
-<script>
-  particlesJS.load('particles-js', 'assets/particles.json', () => {
-    console.log('particles loaded');
-  });
-</script>
-</body></html>
+
+  <div class="container">
+    <header class="header">
+      <a class="brand" href="./" title="Return Home">
+        <img src="assets/logo.svg" alt="BytePlay"/>
+        <div class="brand-text">
+          <b class="title-font">BytePlay</b>
+          <small>Instant classics, in your browser.</small>
+        </div>
+      </a>
+      <nav class="nav">
+        <a class="btn ghost" href="./">Home</a>
+        <a class="btn ghost" href="play.html?id=byor">Upload ROM</a>
+      </nav>
+    </header>
+
+    <div id="content"></div>
+    <footer>© <a class="link" href="./">BytePlay</a></footer>
+  </div>
+
+  <script>
+    async function load(){
+      const id=new URL(location.href).searchParams.get('id');
+      try{
+        const r=await fetch('games.json'); const data=await r.json();
+        const g=(data.games||[]).find(x=>x.id===id);
+        const el=document.getElementById('content');
+        if(!g){ el.innerHTML='<div class="err">Game not found.</div>'; return; }
+        el.innerHTML=`
+          <div class="detail-wrap">
+            <img class="cover" src="${g.cover}" alt="${g.title}">
+            <div>
+              <h2 class="title-font">${g.title}</h2>
+              <div class="meta">${(g.system||'').toUpperCase()} • ${g.year||''} ${g.genre?('• '+g.genre):''}</div>
+              <div class="dim" style="margin:10px 0;">Region: ${g.region||'—'}</div>
+              <div class="actions"><a class="btn" href="play.html?id=${g.id}">▶ Play</a> <a class="btn" href="./">Back</a></div>
+            </div>
+          </div>`;
+      }catch(e){
+        document.getElementById('content').innerHTML='<div class="err">Failed to load details.</div>';
+      }
+    }
+    load();
+  </script>
+
+  <script src="assets/particles.min.js"></script>
+  <script>particlesJS.load('particles-js','assets/particles.json',()=>{});</script>
+</body>
+</html>
