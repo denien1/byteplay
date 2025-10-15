@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
+  <!-- background particles -->
   <div id="particles-js"></div>
 
   <div class="player-page container">
@@ -29,8 +30,10 @@
     </header>
 
     <div class="play-layout">
+      <!-- left sidebar -->
       <aside class="sidebar" id="sidebar"></aside>
 
+      <!-- main area -->
       <main class="play-main">
         <div class="toolbar">
           <span id="title" class="meta"></span>
@@ -39,18 +42,19 @@
           <button class="btn" id="restart">Restart</button>
         </div>
 
+        <!-- responsive player -->
         <div class="emulator-wrap" id="emuWrap">
           <div id="game"></div>
 
-          <!-- liquid loader -->
-          <div id="loader" class="liquid-loader">
+          <!-- liquid loader (hidden until click) -->
+          <div id="loader" class="liquid-loader" style="display:none">
             <div class="loader-track">
               <div class="liquid-fill"></div>
             </div>
             <div class="loading-text">Loading<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
           </div>
 
-          <!-- Play Now button (SVG), centered & scoped -->
+          <!-- Play Now button (scoped styles via .start-btn) -->
           <button id="startBtn" class="start-btn" type="button" aria-label="Start Game">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width="36" height="36">
               <rect width="36" height="36" x="0" y="0" fill="#fdd835"></rect>
@@ -68,6 +72,7 @@
           </button>
         </div>
 
+        <!-- details below player -->
         <section class="details" id="details"></section>
       </main>
     </div>
@@ -78,52 +83,77 @@
   <script>
     const params = new URL(location.href).searchParams;
     const id = params.get('id') || '';
-    let meta=null;
+    let meta = null;
 
     async function boot(){
       try{
-        const r=await fetch('games.json',{cache:'no-store'});
-        const data=await r.json();
-        const games=(data.games||[]).filter(g=>['gba','snes','atari2600'].includes(g.system));
-        meta=games.find(g=>g.id===id);
+        const r = await fetch('games.json', { cache: 'no-store' });
+        const data = await r.json();
+        const games = (data.games || []).filter(g => ['gba','snes','atari2600'].includes(g.system));
+        meta = games.find(g => g.id === id);
       }catch(e){
-        console.error(e); fail('Failed to load games.json'); wireToolbar(); return;
+        console.error(e);
+        fail('Failed to load games.json');
+        wireToolbar();
+        return;
       }
 
       // BYOR
-      if(!meta && id==='byor'){
-        renderSidebar({title:'Bring Your Own ROM',cover:'assets/byor-cover.svg',system:'custom',year:'—',genre:'—',region:'—'});
-        document.getElementById('title').textContent='Bring Your Own ROM';
-        document.getElementById('details').innerHTML=`<h2 class="title-font">Upload ROM</h2><p class="dim">Choose a ROM file (.gba, .gbc, .gb, .sfc/.smc, .nes, .a26). Everything runs locally in your browser.</p>`;
-        const input=document.createElement('input');
-        input.type='file'; input.accept='.gba,.gbc,.gb,.sfc,.smc,.nes,.a26'; input.className='btn'; input.style.margin='12px 0';
+      if(!meta && id === 'byor'){
+        renderSidebar({title:'Bring Your Own ROM', cover:'assets/byor-cover.svg', system:'custom', year:'—', genre:'—', region:'—'});
+        document.getElementById('title').textContent = 'Bring Your Own ROM';
+        document.getElementById('details').innerHTML =
+          `<h2 class="title-font">Upload ROM</h2>
+           <p class="dim">Choose a ROM file (.gba, .gbc, .gb, .sfc/.smc, .nes, .a26). Everything runs locally in your browser.</p>`;
+        const input = document.createElement('input');
+        input.type='file';
+        input.accept='.gba,.gbc,.gb,.sfc,.smc,.nes,.a26';
+        input.className='btn';
+        input.style.margin='12px 0';
         document.querySelector('.toolbar').prepend(input);
-        input.onchange=()=>{
-          const f=input.files?.[0]; if(!f) return;
-          setupAspectByCore(guessCore(f.name)); showLoading();
-          window.EJS_player='#game'; window.EJS_core=guessCore(f.name);
-          window.EJS_gameUrl=URL.createObjectURL(f);
-          window.EJS_pathtodata='data/'; window.EJS_threads=false;
+        input.onchange = () => {
+          const f = input.files?.[0]; if(!f) return;
+          const core = guessCore(f.name);
+          setupAspectByCore(core);
+          showLoading();
+          window.EJS_player = '#game';
+          window.EJS_core   = core;
+          window.EJS_gameUrl = URL.createObjectURL(f);
+          window.EJS_pathtodata = 'data/';
+          window.EJS_threads = false;
           loadLoader();
         };
-        wireToolbar(); return;
+        wireToolbar();
+        return;
       }
 
-      if(!meta){ fail('Game not found.'); wireToolbar(); return; }
+      if(!meta){
+        fail('Game not found.');
+        wireToolbar();
+        return;
+      }
 
-      document.getElementById('title').textContent=meta.title||'';
-      renderSidebar(meta); renderDetails(meta); setupAspectByCore(meta.core);
+      // UI
+      document.getElementById('title').textContent = meta.title || '';
+      renderSidebar(meta);
+      renderDetails(meta);
+      const coreFromMeta = normalizeCore(meta.core);
+      const coreFinal = coreFromMeta || guessCore(meta.rom || '');
+      setupAspectByCore(coreFinal);
 
       // Prepare EJS vars (GitHub Pages safe)
-      window.EJS_player='#game';
-      window.EJS_core=meta.core;              // gba | snes | atari2600
-      window.EJS_gameUrl=meta.rom;            // rom path
-      window.EJS_pathtodata='data/';
-      window.EJS_threads=false;
+      window.EJS_player     = '#game';
+      window.EJS_core       = coreFinal;         // guaranteed defined
+      window.EJS_gameUrl    = meta.rom;          // rom path
+      window.EJS_pathtodata = 'data/';
+      window.EJS_threads    = false;
 
-      showLoading();
-      document.getElementById('startBtn').onclick=()=>{
-        document.getElementById('startBtn').style.display='none';
+      // START button: show loader only after click
+      const startBtn = document.getElementById('startBtn');
+      startBtn.onclick = () => {
+        startBtn.disabled = true;
+        startBtn.style.display = 'none';
+        showLoading();
         loadLoader();
       };
 
@@ -131,37 +161,48 @@
     }
 
     function loadLoader(){
-      const s=document.createElement('script');
-      s.src='data/loader.js';
-      s.onerror=()=>fail('Could not load data/loader.js — ensure /data exists.');
-      s.onload=()=>hideLoading();
+      const s = document.createElement('script');
+      s.src = 'data/loader.js';
+      s.onerror = () => fail('Could not load data/loader.js — ensure /data exists.');
+      s.onload  = () => hideLoading();
       document.body.appendChild(s);
     }
 
-    function fail(msg){ document.getElementById('details').innerHTML=`<div class="err">${msg}</div>`; }
+    function fail(msg){
+      document.getElementById('details').innerHTML = `<div class="err">${msg}</div>`;
+      hideLoading();
+      const startBtn = document.getElementById('startBtn');
+      if(startBtn) startBtn.style.display = 'none';
+    }
 
     function guessCore(n){
-      n=n.toLowerCase();
+      n = (n||'').toLowerCase();
       if(n.endsWith('.gba')) return 'gba';
       if(n.endsWith('.gbc')) return 'gbc';
       if(n.endsWith('.gb'))  return 'gb';
-      if(n.endsWith('.sfc')||n.endsWith('.smc')) return 'snes';
+      if(n.endsWith('.sfc') || n.endsWith('.smc')) return 'snes';
       if(n.endsWith('.nes')) return 'nes';
       if(n.endsWith('.a26')) return 'atari2600';
-      return 'gba';
+      return 'gba'; // safe default
+    }
+
+    function normalizeCore(c){
+      const k = (c||'').toLowerCase();
+      if(['gba','snes','atari2600','gb','gbc','nes'].includes(k)) return k;
+      return '';
     }
 
     function setupAspectByCore(core){
-      const wrap=document.getElementById('emuWrap');
+      const wrap = document.getElementById('emuWrap');
       wrap.classList.remove('ar-3x2','ar-4x3');
-      if(core==='gba') wrap.classList.add('ar-3x2'); else wrap.classList.add('ar-4x3');
+      if(core === 'gba') wrap.classList.add('ar-3x2'); else wrap.classList.add('ar-4x3');
     }
 
     function showLoading(){ document.getElementById('loader').style.display='flex'; }
     function hideLoading(){ document.getElementById('loader').style.display='none'; }
 
     function renderSidebar(g){
-      document.getElementById('sidebar').innerHTML=`
+      document.getElementById('sidebar').innerHTML = `
         <div class="side-card">
           <img class="side-cover" src="${g.cover}" alt="${g.title||'Game Cover'}">
           <h3 class="side-title title-font">${g.title||'Untitled'}</h3>
@@ -172,11 +213,11 @@
     }
 
     function renderDetails(g){
-      const url=location.href;
-      document.getElementById('details').innerHTML=`
+      const url = location.href;
+      document.getElementById('details').innerHTML = `
         <h2 class="title-font">${g.title}</h2>
         <p class="dim">${(g.system||'').toUpperCase()} • ${g.year||''} ${g.genre?('• '+g.genre):''} ${g.region?('• '+g.region):''}</p>
-        ${g.description?`<p>${g.description}</p>`:`<p>No description available.</p>`}
+        ${g.description ? `<p>${g.description}</p>` : `<p>No description available.</p>`}
         <div class="share-row">
           <button class="share-btn" data-kind="x">X</button>
           <button class="share-btn" data-kind="fb">FB</button>
@@ -198,16 +239,17 @@
     }
 
     function wireToolbar(){
-      document.getElementById('fullscreen').onclick=()=>{
-        const el=document.querySelector('#game').parentElement;
-        (el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen||(()=>{})).call(el);
+      document.getElementById('fullscreen').onclick = () => {
+        const el = document.querySelector('#game').parentElement;
+        (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen || (()=>{})).call(el);
       };
-      document.getElementById('restart').onclick=()=>location.reload();
+      document.getElementById('restart').onclick = () => location.reload();
     }
 
     boot();
   </script>
 
+  <!-- particles -->
   <script src="assets/particles.min.js"></script>
   <script>
     particlesJS.load('particles-js','assets/particles.json',()=>{});
