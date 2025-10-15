@@ -97,6 +97,23 @@
         input.className = 'btn';
         input.style.margin = '12px 0';
         document.querySelector('.toolbar').prepend(input);
+        <div class="sharebar" aria-label="Share">
+  <a id="p-share-x" class="iconbtn" href="#" title="Share on X" aria-label="Share on X">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M16.98 3h3.02l-6.6 7.53L21 21h-5.9l-4.62-6.03L5 21H2l7.1-8.09L3 3h6l4.17 5.61L16.98 3Zm-2.07 16h1.67L7.13 5H5.38l9.53 14Z"/></svg>
+  </a>
+  <a id="p-share-fb" class="iconbtn" href="#" title="Share on Facebook" aria-label="Share on Facebook">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06C2 17.08 5.66 21.2 10.44 22v-7.02H7.9v-2.92h2.54V9.85c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.92h-2.34V22C18.34 21.2 22 17.08 22 12.06Z"/></svg>
+  </a>
+  <a id="p-share-tt" class="iconbtn" href="#" title="Share on TikTok" aria-label="Share on TikTok">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M21 8.5a7.24 7.24 0 0 1-4-1.22v7.15a5.57 5.57 0 1 1-5.57-5.57c.2 0 .4.01.6.04v2.95a2.64 2.64 0 1 0 1.86 2.53V2h2.3c.26 1.72 1.58 3.15 3.21 3.6V8.5Z"/></svg>
+  </a>
+  <button id="p-share-copy" class="iconbtn" title="Copy Link" aria-label="Copy Link">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1Zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2Zm0 16H8V7h11v14Z"/></svg>
+  </button>
+  <button id="p-share-native" class="iconbtn" title="Share…" aria-label="Share to…">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M14 3h7v7h-2V6.41l-7.29 7.3-1.42-1.42 7.3-7.29H14V3ZM5 5h7v2H7v10h10v-5h2v7H5V5Z"/></svg>
+  </button>
+</div>
 
         input.onchange = () => {
           const f = input.files?.[0]; if (!f) return;
@@ -195,6 +212,52 @@
   <!-- particles -->
   <script src="assets/particles.min.js"></script>
   <script>particlesJS.load('particles-js', 'assets/particles.json', ()=>console.log('particles loaded'));</script>
+<script>
+(function(){
+  const titleEl = document.getElementById('title');
+  const gameTitle = titleEl ? titleEl.textContent.trim() : 'BytePlay';
+  const pageUrl = encodeURIComponent(location.href);
+  const pageText = encodeURIComponent(`${gameTitle} — Play on BytePlay`);
+
+  const x = document.getElementById('p-share-x');
+  if (x) x.href = `https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageText}`;
+
+  const fb = document.getElementById('p-share-fb');
+  if (fb) fb.href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+
+  const tt = document.getElementById('p-share-tt');
+  if (tt) tt.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    if (navigator.share){
+      try { await navigator.share({ title: gameTitle, text: 'Play on BytePlay', url: location.href }); }
+      catch(_) {}
+    } else {
+      await navigator.clipboard.writeText(location.href);
+      tt.title = "Link copied!";
+      setTimeout(()=> tt.title="Share on TikTok", 1200);
+    }
+  });
+
+  const copyBtn = document.getElementById('p-share-copy');
+  if (copyBtn) copyBtn.addEventListener('click', async ()=>{
+    try {
+      await navigator.clipboard.writeText(location.href);
+      copyBtn.title = "Copied!";
+      setTimeout(()=> copyBtn.title="Copy Link", 1200);
+    } catch(_) {}
+  });
+
+  const nat = document.getElementById('p-share-native');
+  if (nat) nat.addEventListener('click', async ()=>{
+    if (navigator.share){
+      try { await navigator.share({ title: gameTitle, text:'Play on BytePlay', url: location.href }); }
+      catch(_) {}
+    } else {
+      try { await navigator.clipboard.writeText(location.href); } catch(_){}
+    }
+  });
+})();
+</script>
 </body>
 </html>
 

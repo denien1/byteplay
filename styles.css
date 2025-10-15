@@ -214,3 +214,24 @@ footer{margin:20px 0;color:var(--ink-d)}
 }
 
 /* Keep your existing .card, .cover, .btn, etc. styles as-is */
+
+.sharebar{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:10px;
+}
+.iconbtn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:36px;height:36px;
+  border-radius:10px;
+  background:#0e1622;
+  color:#e6edf3;
+  border:1px solid rgba(255,255,255,0.08);
+  cursor:pointer;
+  transition:transform .12s ease, background .2s ease, border-color .2s ease;
+}
+.iconbtn:hover{ transform: translateY(-1px); background:#111b2a; border-color: rgba(255,255,255,0.15); }
+.iconbtn:active{ transform: translateY(0); }
