@@ -197,3 +197,35 @@
   <script>particlesJS.load('particles-js', 'assets/particles.json', ()=>console.log('particles loaded'));</script>
 </body>
 </html>
+
+<!-- Wave titles script -->
+<script>
+(function(){
+  const selectors = [
+    '.brand-title',    // header brand text
+    '.hero h1'         // home hero
+  ];
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function waveify(el){
+    if(!el || el.classList.contains('wave-text')) return;
+    const text = el.textContent;
+    el.textContent = '';
+    el.classList.add('wave-text');
+    const baseDelay = 0.08; // seconds between letters
+    [...text].forEach((ch,i)=>{
+      const span = document.createElement('span');
+      span.className = 'wave-char';
+      span.textContent = ch;
+      if(!reduceMotion) span.style.animationDelay = (i * baseDelay) + 's';
+      el.appendChild(span);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    selectors.forEach(sel=>{
+      document.querySelectorAll(sel).forEach(waveify);
+    });
+  });
+})();
+</script>
