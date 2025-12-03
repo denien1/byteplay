@@ -55,7 +55,6 @@
       "rom": "roms/gba/pokemon-redchapter.gba",
       "description": "Story-driven hack inspired by the Pokémon Adventures manga."
     },
-
     {
       "id": "snes-smw",
       "title": "Super Mario World",
@@ -67,7 +66,6 @@
       "rom": "roms/snes/smw.sfc",
       "description": "Mario and Yoshi team up across Dinosaur Land in this SNES classic."
     },
-
     {
       "id": "a26-pitfall",
       "title": "Pitfall!",
@@ -79,149 +77,173 @@
       "rom": "roms/atari2600/pitfall.a26",
       "description": "Dodge pits and swing on vines in Activision’s legendary Atari adventure."
     },
-
-{
-  "id": "snes-alttp",
-  "title": "The Legend of Zelda: A Link to the Past",
-  "system": "snes",
-  "core": "snes9x",
-  "year": 1991,
-  "genre": "Action-Adventure",
-  "region": "USA",
-  "cover": "covers/snes-alttp.jpg",
-  "rom": "roms/snes/alttp.sfc",
-  "description": "Link’s 16-bit classic with the Light and Dark Worlds and series-defining puzzles."
-},
-
-{
-  "id": "snes-starfox2",
-  "title": "Star Fox 2",
-  "system": "snes",
-  "core": "snes9x",
-  "year": 2017,
-  "genre": "Shooter",
-  "region": "USA/Europe",
-  "cover": "covers/snes-starfox2.jpg",
-  "rom": "roms/snes/starfox2.sfc",
-  "description": "The long-unreleased sequel featuring all-range battles and strategic defense of the Lylat system."
-},
-
-{
-  "id": "snes-supermetroid",
-  "title": "Super Metroid",
-  "system": "snes",
-  "core": "snes9x",
-  "year": 1994,
-  "genre": "Action-Adventure",
-  "region": "Japan/USA",
-  "cover": "covers/snes-supermetroid.jpg",
-  "rom": "roms/snes/super-metroid.sfc",
-  "description": "Exploration masterpiece on Planet Zebes with atmospheric soundtrack and tight controls."
-},
-
-{
-  "id": "snes-aerobizsupersonic",
-  "title": "Aerobiz Supersonic",
-  "system": "snes",
-  "core": "snes9x",
-  "year": 1994,
-  "genre": "Simulation/Strategy",
-  "region": "USA",
-  "cover": "covers/snes-aerobiz-supersonic.jpg",
-  "rom": "roms/snes/aerobiz-supersonic.sfc",
-  "description": "Run an international airline through multiple eras—routes, fleets, politics, profits."
-},
-
-{
-  "id": "snes-dkc-rev2",
-  "title": "Donkey Kong Country (Rev 2)",
-  "system": "snes",
-  "core": "snes9x",
-  "year": 1994,
-  "genre": "Platformer",
-  "region": "USA",
-  "cover": "covers/snes-dkc-rev2.png",
-  "rom": "roms/snes/dkc-rev2.sfc",
-  "description": "Rare’s slick pre-rendered platformer—tight controls, secret-packed levels, thumping OST."
-},
-    
     {
-  "id": "a26-gi-joe-cobra-strike",
-  "title": "G.I. Joe: Cobra Strike",
-  "system": "atari2600",
-  "core": "stella2014",
-  "year": 1983,
-  "genre": "Shooter",
-  "region": "USA",
-  "cover": "covers/a26-gi-joe-cobra-strike.jpg",
-  "rom": "roms/atari2600/gi-joe-cobra-strike.a26",
-  "description": "Defend the G.I. Joe training center from Cobra’s projectile assault in this fast, twitchy shooter."
-},
-    
-{
-  "id": "a26-ghostbusters",
-  "title": "Ghostbusters",
-  "system": "atari2600",
-  "core": "stella2014",
-  "year": 1984,
-  "genre": "Action/Simulation",
-  "region": "USA",
-  "cover": "covers/a26-ghostbusters.png",
-  "rom": "roms/atari2600/ghostbusters.a26",
-  "description": "Buy gear, patrol the city, and bust ghosts across New York in Activision’s movie tie-in."
-},
-    
-{
-  "id": "a26-gigolo",
-  "title": "Gigolo",
-  "system": "atari2600",
-  "core": "stella2014",
-  "year": 1982,
-  "genre": "Arcade",
-  "region": "USA",
-  "cover": "covers/a26-gigolo.jpg",
-  "rom": "roms/atari2600/gigolo.a26",
-  "description": "A rare third-party release from the early 80s. Historical curiosity for the A2600 library."
-},
-{
-  "id": "a26-ghost-manor",
-  "title": "Ghost Manor",
-  "system": "atari2600",
-  "core": "stella2014",
-  "year": 1983,
-  "genre": "Action-Adventure",
-  "region": "USA",
-  "cover": "covers/a26-ghost-manor.jpg",
-  "rom": "roms/atari2600/ghost-manor.a26",
-  "description": "Explore a haunted estate, dodge spirits, and rescue your friend in this atmospheric Xonox title."
-},
-    
-{
-  "id": "a26-adventures-of-tron",
-  "title": "Adventures of Tron",
-  "system": "atari2600",
-  "core": "stella2014",
-  "year": 1982,
-  "genre": "Action",
-  "region": "USA",
-  "cover": "covers/a26-adventures-of-tron.jpg",
-  "rom": "roms/atari2600/adventures-of-tron.a26",
-  "description": "Navigate data streams and evade MCP forces in a multi-level action game inspired by the film."
-},
-    
-{
-  "id": "a26-atlantis",
-  "title": "Atlantis",
-  "system": "atari2600",
-  "core": "stella2014",
-  "year": 1982,
-  "genre": "Shooter",
-  "region": "USA",
-  "cover": "covers/a26-atlantis.jpg",
-  "rom": "roms/atari2600/atlantis.a26",
-  "description": "Protect the underwater city from waves of Gorgon invaders with three strategic defense cannons."
-},
-
+      "id": "snes-alttp",
+      "title": "The Legend of Zelda: A Link to the Past",
+      "system": "snes",
+      "core": "snes9x",
+      "year": 1991,
+      "genre": "Action-Adventure",
+      "region": "USA",
+      "cover": "covers/snes-alttp.jpg",
+      "rom": "roms/snes/alttp.sfc",
+      "description": "Link’s 16-bit classic with the Light and Dark Worlds and series-defining puzzles."
+    },
+    {
+      "id": "snes-starfox2",
+      "title": "Star Fox 2",
+      "system": "snes",
+      "core": "snes9x",
+      "year": 2017,
+      "genre": "Shooter",
+      "region": "USA/Europe",
+      "cover": "covers/snes-starfox2.jpg",
+      "rom": "roms/snes/starfox2.sfc",
+      "description": "The long-unreleased sequel featuring all-range battles and strategic defense of the Lylat system."
+    },
+    {
+      "id": "snes-supermetroid",
+      "title": "Super Metroid",
+      "system": "snes",
+      "core": "snes9x",
+      "year": 1994,
+      "genre": "Action-Adventure",
+      "region": "Japan/USA",
+      "cover": "covers/snes-supermetroid.jpg",
+      "rom": "roms/snes/super-metroid.sfc",
+      "description": "Exploration masterpiece on Planet Zebes with atmospheric soundtrack and tight controls."
+    },
+    {
+      "id": "snes-aerobizsupersonic",
+      "title": "Aerobiz Supersonic",
+      "system": "snes",
+      "core": "snes9x",
+      "year": 1994,
+      "genre": "Simulation/Strategy",
+      "region": "USA",
+      "cover": "covers/snes-aerobiz-supersonic.jpg",
+      "rom": "roms/snes/aerobiz-supersonic.sfc",
+      "description": "Run an international airline through multiple eras—routes, fleets, politics, profits."
+    },
+    {
+      "id": "snes-dkc-rev2",
+      "title": "Donkey Kong Country (Rev 2)",
+      "system": "snes",
+      "core": "snes9x",
+      "year": 1994,
+      "genre": "Platformer",
+      "region": "USA",
+      "cover": "covers/snes-dkc-rev2.png",
+      "rom": "roms/snes/dkc-rev2.sfc",
+      "description": "Rare’s slick pre-rendered platformer—tight controls, secret-packed levels, thumping OST."
+    },
+    {
+      "id": "a26-gi-joe-cobra-strike",
+      "title": "G.I. Joe: Cobra Strike",
+      "system": "atari2600",
+      "core": "stella2014",
+      "year": 1983,
+      "genre": "Shooter",
+      "region": "USA",
+      "cover": "covers/a26-gi-joe-cobra-strike.jpg",
+      "rom": "roms/atari2600/gi-joe-cobra-strike.a26",
+      "description": "Defend the G.I. Joe training center from Cobra’s projectile assault in this fast, twitchy shooter."
+    },
+    {
+      "id": "a26-ghostbusters",
+      "title": "Ghostbusters",
+      "system": "atari2600",
+      "core": "stella2014",
+      "year": 1984,
+      "genre": "Action/Simulation",
+      "region": "USA",
+      "cover": "covers/a26-ghostbusters.png",
+      "rom": "roms/atari2600/ghostbusters.a26",
+      "description": "Buy gear, patrol the city, and bust ghosts across New York in Activision’s movie tie-in."
+    },
+    {
+      "id": "a26-gigolo",
+      "title": "Gigolo",
+      "system": "atari2600",
+      "core": "stella2014",
+      "year": 1982,
+      "genre": "Arcade",
+      "region": "USA",
+      "cover": "covers/a26-gigolo.jpg",
+      "rom": "roms/atari2600/gigolo.a26",
+      "description": "A rare third-party release from the early 80s. Historical curiosity for the A2600 library."
+    },
+    {
+      "id": "a26-ghost-manor",
+      "title": "Ghost Manor",
+      "system": "atari2600",
+      "core": "stella2014",
+      "year": 1983,
+      "genre": "Action-Adventure",
+      "region": "USA",
+      "cover": "covers/a26-ghost-manor.jpg",
+      "rom": "roms/atari2600/ghost-manor.a26",
+      "description": "Explore a haunted estate, dodge spirits, and rescue your friend in this atmospheric Xonox title."
+    },
+    {
+      "id": "a26-adventures-of-tron",
+      "title": "Adventures of Tron",
+      "system": "atari2600",
+      "core": "stella2014",
+      "year": 1982,
+      "genre": "Action",
+      "region": "USA",
+      "cover": "covers/a26-adventures-of-tron.jpg",
+      "rom": "roms/atari2600/adventures-of-tron.a26",
+      "description": "Navigate data streams and evade MCP forces in a multi-level action game inspired by the film."
+    },
+    {
+      "id": "a26-atlantis",
+      "title": "Atlantis",
+      "system": "atari2600",
+      "core": "stella2014",
+      "year": 1982,
+      "genre": "Shooter",
+      "region": "USA",
+      "cover": "covers/a26-atlantis.jpg",
+      "rom": "roms/atari2600/atlantis.a26",
+      "description": "Protect the underwater city from waves of Gorgon invaders with three strategic defense cannons."
+    },
+    {
+      "id": "a26-pac-man",
+      "title": "Pac-Man",
+      "system": "atari2600",
+      "core": "stella2014",
+      "year": 1982,
+      "genre": "Arcade",
+      "region": "USA",
+      "cover": "covers/a26-pac-man.jpg",
+      "rom": "roms/atari2600/pac-man.a26",
+      "description": "The classic maze arcade game, ported to the Atari 2600."
+    },
+    {
+      "id": "snes-mega-man-x",
+      "title": "Mega Man X",
+      "system": "snes",
+      "core": "snes9x",
+      "year": 1993,
+      "genre": "Platformer",
+      "region": "USA",
+      "cover": "covers/snes-mega-man-x.jpg",
+      "rom": "roms/snes/mega-man-x.sfc",
+      "description": "A new generation of Mega Man, with a darker story and new abilities."
+    },
+    {
+      "id": "gba-minish-cap",
+      "title": "The Legend of Zelda: The Minish Cap",
+      "system": "gba",
+      "year": 2004,
+      "genre": "Action-Adventure",
+      "region": "USA",
+      "cover": "covers/gba-minish-cap.jpg",
+      "rom": "roms/gba/minish-cap.gba",
+      "description": "Link teams up with a magical talking cap to save Hyrule from a mysterious sorcerer."
+    },
     {
       "id": "byor",
       "title": "Bring Your Own ROM",
